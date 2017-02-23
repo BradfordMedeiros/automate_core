@@ -1,0 +1,7 @@
+
+{
+	"state": ["temperature"],
+	"eval": "(temperature)=>temperature>20",
+	"action": ["test"],
+	"values": {"test":{"cat":12}} 
+}

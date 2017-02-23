@@ -1,0 +1,13 @@
+
+
+[
+	{
+        "state": ["humidity","test"],
+        "eval": "(humidity,test)=>humidity==test.temp",
+        "action": ["fan_on"]
+    }
+
+]
+
+
+n
