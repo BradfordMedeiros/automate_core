@@ -3,7 +3,7 @@
 var child_process = require("child_process");
 var path = require("path");
 var fse = require("fs-extra");
-var sequencer = require("../sequencer/sequencer.js");
+var sequencer = require("when_do").sequencer;
 
 var load_actions_path = require("./action.js");
 var load_states_path = require("./state.js");

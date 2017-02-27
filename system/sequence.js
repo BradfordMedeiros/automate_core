@@ -37,7 +37,7 @@ var generate_sequence_promise = function(sequence_path, system_actions, sequence
 	var sequence_actions = json.actions;
     
 	var the_sequence_promise = new Promise((resolve,reject)=>{
-		var seq = new sequencer();
+		var seq = sequencer();
         
 		console.log("sequence actions length ",sequence_actions.length);
 		for (var i = 0 ; i < sequence_actions.length ; i++){

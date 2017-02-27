@@ -1,2 +1,3 @@
 
-echo "red" > ../states/color.state.json
+echo '"blue"' > ../states/color.state.json
+echo '"ok"'
