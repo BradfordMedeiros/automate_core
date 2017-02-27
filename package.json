@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/BradfordMedeiros/automate_core#readme",
   "dependencies": {
+    "mqtt": "^2.4.0",
     "when_do": "^1.0.3"
   }
 }

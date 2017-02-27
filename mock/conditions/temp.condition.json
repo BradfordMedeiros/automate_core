@@ -1,6 +1,6 @@
 
 {
 	"state": ["temperature"],
-	"eval": "(temperature)=>temperature>200",
+	"eval": "(temperature)=>temperature<200",
 	"action": ["change_color_red"]
 }

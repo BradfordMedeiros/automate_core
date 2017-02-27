@@ -39,9 +39,27 @@ var condition = function(states,actions, path){
 		}
 	});
 
-  logic.when({}, this.is_true).do( x => this.execute_actions(x));
+  this.handle = logic.when({}, this.is_true).do( x => this.execute_actions(x));
 	this.path = path;
 };
+
+condition.prototype.get_name = function() {
+	const name = this.path;
+  const cond  = name.split('/');
+  const namme = cond[cond.length-1].split('.')[0];
+  return namme;
+}
+
+condition.prototype.get_state = function() {
+	return this.handle.get_state();
+}
+condition.prototype.pause = function(){
+	this.handle.pause();
+}
+
+condition.prototype.resume = function() {
+	this.handle.resume();
+}
 
 condition.is_condition = function(condition_path){
 	return is_identifier(condition_path,"condition");
