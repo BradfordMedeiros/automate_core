@@ -2,8 +2,8 @@
 
 const fs = require('fs');
 const path = require('path');
-const info = require('./info.js');
-const createRest = require('./rest.js');
+const info = require('./communication/info.js');
+const createRest = require('./communication/rest.js');
 const load_system = require('./system/system.js');
 
 const isInConditions = filepath => {

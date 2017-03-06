@@ -1,0 +1,93 @@
+
+/*
+      condition: <on/off>
+ */
+
+
+
+const mqtt =  require('mqtt');
+const MQTT_URL = 'http://127.0.0.1:1883';
+
+verbose = true;
+const client = mqtt.connect(MQTT_URL);
+verbose = false;
+
+client.on('connect', () => {
+  console.log('mqtt client connected');
+});
+
+const prefix = '/automate_sys/req/';
+client.subscribe(prefix + '#');
+
+client.on('message', (topic, message) => {
+  console.log('got a message for ', topic);
+  if (topic.indexOf(prefix) >= 0){
+    console.log('pushing to handlers');
+    callbackHandlers.forEach(callback => {
+      callback(getConditionNameFromTopic(topic),  message.toString());
+    });
+  }
+});
+
+const log_mqtt_message = mongo => (topic, message) => {
+  console.log('logging mqtt message');
+  mongo.collection('topics').insertOne({ topic, message: message.toString() });
+};
+
+
+const callbackHandlers = [ ];
+const onConditionToggle = callback => {
+  callbackHandlers.push(callback);
+};
+
+
+const getConditionNameFromTopic = topic => {
+  const split_topics = topic.split('/');
+  return split_topics[split_topics.length -1 ];
+};
+
+
+const getNameForCondition = conditionName => {
+  return '/automate_sys/info/conditions/' + conditionName;
+};
+
+const publishCondition = (conditionName) => {
+  console.log('publishing conditoin: ' , conditionName);
+  client.publish(getNameForCondition(conditionName), 'on');
+};
+
+const publishConditionNames = conditions => {
+  const condition_names = get_condition_names(conditions);
+  condition_names.forEach(publishCondition);
+};
+
+const get_condition_names = conditions => {
+  const condition_names = conditions.map(condition => condition.get_name());
+  return condition_names;
+};
+
+module.exports  =  {
+  publishConditionNames,
+  onConditionToggle,
+  get_condition_names,
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
