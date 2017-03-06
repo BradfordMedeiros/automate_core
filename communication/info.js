@@ -24,6 +24,9 @@ client.on('message', (topic, message) => {
   if (topic.indexOf(prefix) >= 0){
     console.log('pushing to handlers');
     callbackHandlers.forEach(callback => {
+      const topicName = getConditionNameFromTopic(topic);
+      p = topic;
+      t = topicName;
       callback(getConditionNameFromTopic(topic),  message.toString());
     });
   }
@@ -42,7 +45,7 @@ const onConditionToggle = callback => {
 
 
 const getConditionNameFromTopic = topic => {
-  const split_topics = topic.split('/');
+  const split_topics = topic.split('/').filter(x => x.length > 0);
   return split_topics[split_topics.length -1 ];
 };
 

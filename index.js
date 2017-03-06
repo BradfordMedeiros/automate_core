@@ -59,8 +59,11 @@ const load = () => load_system('./mock').then(theSystem => {
 
 
   info.onConditionToggle((conditionName, requestedState) => {
-    const conds = sys.conditions.filter(condition => condition.get_name() === conditionName);
+    console.log('on condition toggle called ', conditionName, ' new state ', requestedState);
+    conds = sys.conditions.filter(condition => condition.get_name() === conditionName);
+
     if (requestedState === 'on'){
+      console.log('trying to resume');
       conds.forEach(cond => {
         console.log('resuming condition ', cond.get_name());
         if (cond.get_state() === 'paused'){
@@ -68,6 +71,7 @@ const load = () => load_system('./mock').then(theSystem => {
         }
       });
     }else if (requestedState === 'off'){
+      console.log('trying to pause');
       conds.forEach(cond => {
         console.log('pausing condition ', cond.get_name());
         if (cond.get_state() === 'active'){

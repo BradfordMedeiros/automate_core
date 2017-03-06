@@ -1,1 +1,0 @@
-{"state":["temperature"],"eval":"(temperature)=>temperature>20000000","action":["test"],"values":{"test":{"cat":10002}}}
