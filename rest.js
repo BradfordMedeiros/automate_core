@@ -11,6 +11,7 @@
 
 const express = require("express");
 const bodyParser = require('body-parser');
+const fse = require('fs-extra');
 
 const router = express();
 
@@ -23,7 +24,7 @@ const model = function(get_conditions, add_condition, delete_condition) {
 model.prototype.getConditions = function(req,res){
   const conditions = this.get_conditions().map(condition => ({
     name: condition.get_name(),
-    file: require(condition.path),
+    file: JSON.parse(fse.readFileSync(condition.path)),
   }));
   const json = {
     conditions,
@@ -44,8 +45,7 @@ model.prototype.get = function(req, res) {
     return;
   }
 
-  const conditionPath = conditions[0].path;
-  const json = require(conditions[0].path);
+  const json = JSON.parse(fse.readFileSync(conditions[0].path));
   res.jsonp(json);
 };
 model.prototype.delete = function(req,res) {
