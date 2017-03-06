@@ -59,29 +59,20 @@ var generate_action_promise = function(the_path, json_value){
     
 	var the_promise = undefined;
 
-	if (is_json){       
-		console.log("writing json file");
-            
+	if (is_json){
 		var the_json_value = json_value !== undefined? JSON.stringify(json_value): "0";
 		var command = "echo "+the_json_value+" > "+the_path;
-		console.log("calling ", command);
+		//console.log("calling ", command);
         // this should be changed eventually but should be fine for now
-		child_process.exec(command,function(err){
-			if (err){
-				console.log(err);
-				console.log("warning error");
-			}else{
-				console.log("finished writing file ",the_path);
-			}
-		});
+		child_process.exec(command);
 	}else{
 		the_promise = new Promise(function(resolve,reject){
         
 			var parameter = json_value === undefined? "": JSON.stringify(json_value);
 			var command = the_path + " " + parameter;
 
-			console.log('the path ',the_path);
-			console.log('command ', command);
+			//console.log('the path ',the_path);
+			//console.log('command ', command);
 			child_process.exec(
             command,
             {cwd: path.resolve(the_path, "..")},
@@ -89,18 +80,17 @@ var generate_action_promise = function(the_path, json_value){
 
 	var is_error = false;
 	try{
-		console.log("std out ",stdout);
 		var json_result = JSON.parse(stdout);
                    
 	}catch(e){
 		is_error = true;
 	}
 	if (err === null && !is_error){
-		console.log("Finished executing action success ",the_path);
+		//console.log("Finished executing action success ",the_path);
 		resolve(json_result);
 	}else{
-		console.log("Error executing action success ",the_path);
-		console.log("expected json got ",stdout);
+		//console.log("Error executing action success ",the_path);
+		//console.log("expected json got ",stdout);
 		reject(stderr);
 	}
 });

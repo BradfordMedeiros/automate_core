@@ -17,6 +17,17 @@ var system = function(actions,states,conditions, sequences){
 	this.states = states;
 	this.conditions = conditions; // path of various conditions available
 	this.sequences = sequences;
+
+	this.destroy =  function() {
+		if (this.conditions){
+			this.conditions.forEach( condition => condition.stop());
+    }
+    this.actions = undefined;
+    this.states = undefined;
+    this.conditions = undefined;
+    this.sequences = undefined;
+	};
+
 };
 
 // generates a system based upon the path to the root folder
@@ -65,6 +76,7 @@ var load_system_from_path = function(sys_when_do_root_folder){
 	});
 	return system_loaded_promise;
 };
+
 
 
 module.exports = load_system_from_path;

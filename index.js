@@ -1,28 +1,64 @@
 
 
+const fs = require('fs');
+const path = require('path');
 const info = require('./info.js');
+const createRest = require('./rest.js');
 const load_system = require('./system/system.js');
 
-let system;
-let theFolder;
-const load =  (folder) => {
-    if (theFolder !== undefined && theFolder !== folder){
-      console.error('loading a second system.  Can only load one root system');
-    }
-    if (!system){
-      theFolder = folder;
-      system = load_system(folder);
-    }
-    return system;
+const isInConditions = filepath => {
+  const a = path.resolve('./mock/conditions');
+  const b = path.resolve(filepath);
+  return b.indexOf(a) == 0;
+};
+
+
+let sys = undefined;
+const load = () => load_system('./mock').then(theSystem => {
+  if (sys){
+    sys.destroy();
+  }
+  sys = theSystem;
+  info.publishConditionNames(sys.conditions);
+
+  const deleteCondition = conditionToDelete => {
+    const conditionToDeletePath = sys.conditions.filter(condition  => condition === conditionToDelete)[0].path;
+    fs.unlink(conditionToDeletePath);
+    const promise = new Promise((resolve, reject) => {
+      load_system('./mock').then(theSystem =>{
+        sys = theSystem;
+        resolve();
+        console.log('reloaded system');
+      }).catch(() => {
+        reject();
+        console.log('error reloading system');
+      });
+    });
+    return promise;
   };
 
+  const addCondition = (name, conditionParameters) => {
+    const conditionPath = path.resolve('./mock/conditions', name).concat('.condition.json');
+    console.log('adding condition at ', conditionPath);
 
-load('./mock').then(sys => {
-  info.publishConditionNames(sys.conditions);
+    const thePromise = new Promise((resolve,  reject) => {
+      fs.writeFile(conditionPath, JSON.stringify(conditionParameters), () => {
+        load_system('./mock').then(theSystem => {
+          sys=  theSystem;
+          resolve();
+          console.log('reloaded system');
+        });
+      });
+    }).catch(reject);
+    return thePromise;
+  };
+
+  const getConditions = () => sys.conditions;
+
+  createRest( getConditions, addCondition, deleteCondition);
+
+
   info.onConditionToggle((conditionName, requestedState) => {
-    console.log('condition: ', conditionName);
-    console.log('new state: ', requestedState);
-
     const conds = sys.conditions.filter(condition => condition.get_name() === conditionName);
     if (requestedState === 'on'){
       conds.forEach(cond => {
@@ -45,7 +81,7 @@ load('./mock').then(sys => {
     // should just publish ones that change
     info.publishConditionNames(sys.conditions);
   });
-});
+}).catch(err => console.log('could not load system ',err));
 
 
 

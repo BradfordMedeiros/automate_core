@@ -61,6 +61,10 @@ condition.prototype.resume = function() {
 	this.handle.resume();
 }
 
+condition.prototype.stop = function() {
+	this.handle.stop();
+};
+
 condition.is_condition = function(condition_path){
 	return is_identifier(condition_path,"condition");
 };
@@ -76,7 +80,7 @@ function is_identifier(path_to_file,type){
         (the_file[0] !== ".") && 
         (the_file[the_file.length-1] !== ".") && 
         state[state.length-2] === type && 
-        state.length-2 >0
+        state.length-2 > 0
 	);
 }
 

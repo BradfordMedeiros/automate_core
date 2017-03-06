@@ -1,4 +1,10 @@
 
+/*
+      condition: <on/off>
+ */
+
+
+
 const mqtt =  require('mqtt');
 const MQTT_URL = 'http://127.0.0.1:1883';
 
@@ -64,12 +70,9 @@ module.exports  =  {
   publishConditionNames,
   onConditionToggle,
   get_condition_names,
-}
+};
 
 
-//info.publishConditionState(<on/off>, conditions)
-//info.onConditionToggle((condition_name, new_state) => {
-//});
 
 
 
