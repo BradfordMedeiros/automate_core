@@ -54,14 +54,13 @@ const getNameForCondition = conditionName => {
   return '/automate_sys/info/conditions/' + conditionName;
 };
 
-const publishCondition = (conditionName) => {
+const publishCondition = (conditionName, state) => {
   console.log('publishing conditoin: ' , conditionName);
-  client.publish(getNameForCondition(conditionName), 'on');
+  client.publish(getNameForCondition(conditionName),  state);
 };
 
 const publishConditionNames = conditions => {
-  const condition_names = get_condition_names(conditions);
-  condition_names.forEach(publishCondition);
+  conditions.forEach(condition => publishCondition(condition.get_name(), condition.get_state()));
 };
 
 const get_condition_names = conditions => {
