@@ -2,16 +2,10 @@
 const fs = require('fs');
 const path = require('path');
 const info = require('./communication/info.js');
-const createRest = require('./communication/rest.js');
-const load_system = require('./system/system.js');
+const createRest = require('./communication/http/rest.js');
+const load_system = require('./system/load_system.js');
 
-const isInConditions = filepath => {
-  const a = path.resolve('./mock/conditions');
-  const b = path.resolve(filepath);
-  return b.indexOf(a) == 0;
-};
-
-
+con
 let sys = undefined;
 const load = () => load_system('./mock').then(theSystem => {
   if (sys){
@@ -20,37 +14,6 @@ const load = () => load_system('./mock').then(theSystem => {
   sys = theSystem;
   info.publishConditionNames(sys.conditions);
 
-  const deleteCondition = conditionToDelete => {
-    const conditionToDeletePath = sys.conditions.filter(condition  => condition === conditionToDelete)[0].path;
-    fs.unlink(conditionToDeletePath);
-    const promise = new Promise((resolve, reject) => {
-      load_system('./mock').then(theSystem =>{
-        sys = theSystem;
-        resolve();
-        console.log('reloaded system');
-      }).catch(() => {
-        reject();
-        console.log('error reloading system');
-      });
-    });
-    return promise;
-  };
-
-  const addCondition = (name, conditionParameters) => {
-    const conditionPath = path.resolve('./mock/conditions', name).concat('.condition.json');
-    console.log('adding condition at ', conditionPath);
-
-    const thePromise = new Promise((resolve,  reject) => {
-      fs.writeFile(conditionPath, JSON.stringify(conditionParameters), () => {
-        load_system('./mock').then(theSystem => {
-          sys=  theSystem;
-          resolve();
-          console.log('reloaded system');
-        });
-      });
-    }).catch(reject);
-    return thePromise;
-  };
 
   const getConditions = () => sys.conditions;
 

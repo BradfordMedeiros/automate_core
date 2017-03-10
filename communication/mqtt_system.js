@@ -1,30 +1,15 @@
 
-/*
-      condition: <on/off>
- */
-
-
-
 const mqtt =  require('mqtt');
 const MQTT_URL = 'http://127.0.0.1:1883';
-
 const client = mqtt.connect(MQTT_URL);
 
-client.on('connect', () => {
-  console.log('mqtt client connected');
-});
+const AUTOMATE_TOPIC_PREFIX = '/automate_sys/req/';
 
-const prefix = '/automate_sys/req/';
-client.subscribe(prefix + '#');
-
+client.subscribe(AUTOMATE_TOPIC_PREFIX + '#');
 client.on('message', (topic, message) => {
-  console.log('got a message for ', topic);
-  if (topic.indexOf(prefix) >= 0){
-    console.log('pushing to handlers');
+  if (topic.indexOf(AUTOMATE_TOPIC_PREFIX) >= 0){
     callbackHandlers.forEach(callback => {
       const topicName = getConditionNameFromTopic(topic);
-      p = topic;
-      t = topicName;
       callback(getConditionNameFromTopic(topic),  message.toString());
     });
   }

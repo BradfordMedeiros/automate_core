@@ -1,38 +1,32 @@
 
-/*
-const load_system = require('./system/system.js');
+const path = require('path');
+const system_mqtt = require('./communication/mqtt_system');
+const virtual_system = require('./system/virtual_system');
+const create_routes = require('./communication/http/rest');
 
-const virtual_system = undefined;
-const load_virtual_system = async (system_folder) => {
-  try {
-    await load_system()
-  }catch (err){
-    console.error('could not reload virtual system');
-  }
-};
+const PORT = 9000;
 
+virtual_system.onSystemLoad(() => {
+  system_mqtt.publishConditionNames(virtual_system.get_virtual_system().conditions)
+});
 
+virtual_system.load_virtual_system(path.resolve('./mock')).then(() => {
+  const router = create_routes(virtual_system);
+  router.listen(PORT, () => console.log("Server start on port "+ PORT));
 
-virtual_system.add_condition = function(name, conditionParameters) {
-  const conditionPath = path.resolve('./mock/conditions', name).concat('.condition.json');
-  console.log('adding condition at ', conditionPath);
+  system_mqtt.onConditionToggle((conditionName, message) => {
+    const matchingConditions = virtual_system.get_virtual_system()
+      .conditions
+      .filter(condition => condition.get_name() === conditionName);
 
-  const thePromise = new Promise((resolve,  reject) => {
-    fs.writeFile(conditionPath, JSON.stringify(conditionParameters), () => {
-      load_system('./mock').then(theSystem => {
-        sys=  theSystem;
-        resolve();
-        console.log('reloaded system');
-      });
-    });
-  }).catch(reject);
-  return thePromise;
-}
-
-virtual_system.remove_condition = function() {
-
-};
-*/
-
-console.log('hello')
+    if (matchingConditions.length === 1){
+      const matchingCondition = matchingConditions[0];
+      if (message === 'on') {
+        matchingCondition.resume();
+      }else if (message === 'off'){
+        matchingCondition.pause();
+      }
+    }
+  });
+}).catch(()=> console.log('oh no!'));
 
