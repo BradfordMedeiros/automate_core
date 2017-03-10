@@ -88,7 +88,7 @@ const load = () => load_system('./mock').then(theSystem => {
 }).catch(err => console.log('could not load system ',err));
 
 
-
+load()
 module.exports = {
   load_system: load,
 };
