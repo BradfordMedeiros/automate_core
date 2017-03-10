@@ -8,9 +8,7 @@
 const mqtt =  require('mqtt');
 const MQTT_URL = 'http://127.0.0.1:1883';
 
-verbose = true;
 const client = mqtt.connect(MQTT_URL);
-verbose = false;
 
 client.on('connect', () => {
   console.log('mqtt client connected');

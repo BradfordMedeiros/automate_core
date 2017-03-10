@@ -118,9 +118,7 @@ router.delete('/conditions/:condition_name', (req, res) => {
   modelToUse.delete(req,res);
 });
 
-router.get('/diagnostic', (req,res) => {
-  res.jsonp({ status: 'ok' });
-});
+
 
 
 let serverInit = false;
