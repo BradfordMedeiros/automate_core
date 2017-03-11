@@ -1,7 +1,7 @@
 
 const fs = require("fs");
 const path = require('path');
-const load_system = require('./load_system');
+const load_system = require('./component/load_system');
 
 const handlers = [ ];
 
