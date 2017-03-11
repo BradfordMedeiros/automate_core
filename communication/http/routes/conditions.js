@@ -20,8 +20,6 @@ const create_routes = virtual_system => {
   });
 
   router.get('/:condition_name', (req, res) => {
-    console.log('get / ---------------');
-    //modelToUse.getConditions(req,res);
     const conditions = virtual_system.get_virtual_system()
       .conditions
       .filter(condition => condition.get_name() === req.params.condition_name);
@@ -40,7 +38,6 @@ const create_routes = virtual_system => {
   });
 
   router.post('/:condition_name/', (req, res) => {
-    console.log('getting post');
     if (req.body === undefined){
       res.status(400).jsonp({ error: 'invalid parameters' });
       return;
@@ -74,7 +71,7 @@ const create_routes = virtual_system => {
   });
 
   return router;
-}
+};
 
 
 module.exports = create_routes;
