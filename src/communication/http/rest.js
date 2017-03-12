@@ -20,6 +20,10 @@ const create_routes = virtual_system => {
   router.use('/states', create_state_routes(virtual_system));
   router.use('/actions', create_action_routes(virtual_system));
   router.use('/conditions', create_condition_routes(virtual_system));
+
+  router.post('/reload', (req,res) => {
+    virtual_system.load_virtual_system('./mock').then(() => res.send('ok')).catch(() => res.error());
+  });
   return router;
 };
 

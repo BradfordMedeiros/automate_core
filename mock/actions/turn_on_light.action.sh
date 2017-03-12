@@ -1,2 +1,2 @@
-
-echo '{"light_on" : true}'
+wemo switch Wemo0 on
+echo '"ok"'
