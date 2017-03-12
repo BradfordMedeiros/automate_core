@@ -39,7 +39,8 @@ var condition = function(states,actions, path){
 		}
 	});
 
-  this.handle = logic.when({}, this.is_true).do( x => this.execute_actions(x));
+  this.handle = undefined;
+  this.is_stopped = false;
 	this.path = path;
 };
 
@@ -51,18 +52,31 @@ condition.prototype.get_name = function() {
 }
 
 condition.prototype.get_state = function() {
-	return this.handle.get_state();
+	if (this.handle === undefined){
+		return 'paused';
+	}else{
+    return this.handle.get_state();
+  }
 }
 condition.prototype.pause = function(){
-	this.handle.pause();
+	if (this.handle !== undefined){
+    this.handle.pause();
+  }
 }
 
 condition.prototype.resume = function() {
-	this.handle.resume();
+	if (this.handle === undefined && !this.is_stopped){
+    this.handle = logic.when({}, this.is_true).do( x => this.execute_actions(x));
+	}else{
+    this.handle.resume();
+  }
 }
 
 condition.prototype.stop = function() {
-	this.handle.stop();
+	if (this.handle !== undefined){
+    this.handle.stop();
+  }
+  this.is_stopped = true;
 };
 
 condition.is_condition = function(condition_path){
