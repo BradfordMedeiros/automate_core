@@ -1,8 +1,8 @@
 
 const path = require('path');
-const system_mqtt = require('./communication/mqtt_system');
-const virtual_system = require('./system/virtual_system');
-const create_routes = require('./communication/http/rest');
+const system_mqtt = require('./src/communication/mqtt_system');
+const virtual_system = require('./src/system/virtual_system');
+const create_routes = require('./src/communication/http/rest');
 
 const PORT = 9000;
 
