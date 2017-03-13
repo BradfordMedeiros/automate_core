@@ -13,6 +13,10 @@ const create_routes = virtual_system => {
     res.jsonp(json);
   });
 
+  router.post('/:state_name', (req, res) => {
+    res.send('ok');
+  });
+
   return router;
 };
 

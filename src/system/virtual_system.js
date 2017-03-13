@@ -52,6 +52,8 @@ const delete_condition = name => {
   return promise;
 };
 
+
+
 const get_virtual_system = () => virtual_system;
 
 const onSystemLoad = func => {

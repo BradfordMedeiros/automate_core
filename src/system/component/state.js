@@ -50,10 +50,12 @@ function is_identifier(path_to_file,type){
 var generate_state_promise = function(the_path){
    
 	var parts = the_path.split(".");
-	var is_json = parts[parts.length-1] === "json";
-    
+	console.log('part is ',parts[parts.length-1]);
+
+	const extension = parts[parts.length-1];
+
 	var the_promise = undefined;
-	if (is_json){
+	if (extension === 'json'){
 		the_promise = new Promise(function(resolve,reject){
 			fse.readFile(the_path, "utf-8", (error, value)=>{
 				try{
@@ -68,7 +70,44 @@ var generate_state_promise = function(the_path){
 				}
 			});
 		});
-	}else{
+	}else if (extension === 'js'){
+		const command = `node ${the_path}`;
+		c = command;
+		cwd = path.resolve(the_path, "..");
+
+    the_promise = new Promise(function(resolve,reject){
+    	console.log("executing ", command);
+    	console.log('--------------------------');
+      child_process.exec(command,
+        (err,stdout,stderr)=>	{
+          console.log('err is ', err);
+          console.log('stdout is ', stdout);
+          console.log('stderr is ', stderr);
+          let is_error = false;
+          try{
+          	console.log('parsing json');
+            var json_result = JSON.parse(stdout);
+						console.log('sucessfully parsed json');
+          }catch(e){
+          	console.log('errored parsing json');
+            is_error = true;
+          }
+
+          er = err;
+          is_err = is_error;
+
+          if (err === null && !is_error){
+            resolve(json_result);
+          }else{
+          	console.log('oh no error');
+          	console.log(err);
+          	console.log(stderr);
+            reject(stderr);
+          }
+        });
+    });
+	}
+	else{
 		the_promise = new Promise(function(resolve,reject){
 			child_process.execFile(the_path,
 				{cwd: path.resolve(the_path, "..")},
@@ -81,7 +120,7 @@ var generate_state_promise = function(the_path){
 						is_error = true;
 					}
 
-					if (err !== null && !is_error){
+					if (err === null && !is_error){
 						resolve(json_result);
 					}else{
 					reject(stderr);
