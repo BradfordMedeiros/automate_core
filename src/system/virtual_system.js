@@ -52,6 +52,25 @@ const delete_condition = name => {
   return promise;
 };
 
+const add_state = (name, code) => {
+  const statePath = path.resolve('./mock/states', name).concat('.state.js');
+
+  const thePromise = new Promise((resolve,  reject) => {
+    fs.writeFile(statePath, code, () => {
+      load_system('./mock').then(sys => {
+        virtual_system =  sys;
+        resolve();
+        console.log('reloaded system');
+      }).catch(reject);
+    });
+  });
+  return thePromise;
+};
+
+const delete_state = (name, code) => {
+  console.log('delete state called: name: ', name, ' code: ', code);
+  throw (new Error('not implemented delete state'));
+};
 
 
 const get_virtual_system = () => virtual_system;
@@ -64,6 +83,8 @@ module.exports = {
   load_virtual_system,
   add_condition,
   delete_condition,
+  add_state,
+  delete_state,
   get_virtual_system,
   onSystemLoad,
 };
