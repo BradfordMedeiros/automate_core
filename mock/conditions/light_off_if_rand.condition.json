@@ -1,0 +1,1 @@
+{"state":["random"],"action":["turn_off_light"],"eval":"random => random < 0.7"}

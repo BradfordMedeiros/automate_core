@@ -1,1 +1,0 @@
-{"state":["temperature"],"action":["change_color_red"],"eval":"(temperature) => temperature < 'a'"}

@@ -20,9 +20,9 @@ const create_routes = virtual_system => {
      }
 
      const name = req.params.state_name;
-     const code = req.body;
-     c = code;
-     virtual_system.add_state(name, code);
+     const stateEval = req.body.stateEval;
+     c = stateEval;
+     virtual_system.add_state(name, `(${stateEval})()`);
      res.status(200).send('ok');
   });
 
