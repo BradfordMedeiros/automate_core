@@ -31,6 +31,17 @@ const create_routes = virtual_system => {
     action.execute().then(result => res.jsonp(result)).catch(() => res.status(500));
   });
 
+  router.post('/modify/:action_name', (req, res) => {
+    if (req.body === undefined){
+      res.status(400).jsonp({ error: 'invalid parameters' });
+      return;
+    }
+
+    const name = req.params.action_name;
+    const actionEval = req.body.actionEval;
+    virtual_system.add_action(name, `(${actionEval})()`);
+    res.status(200).send('ok');
+  });
 
   return router;
 };

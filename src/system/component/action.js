@@ -55,17 +55,46 @@ function is_identifier(path_to_file,type){
 // promise that executes action and resolves when complete
 var generate_action_promise = function(the_path, json_value){
 	var parts = the_path.split(".");
-	var is_json = parts[parts.length-1] === "json";
+  const extension = parts[parts.length-1];
     
 	var the_promise = undefined;
 
-	if (is_json){
+	if (extension === 'json'){
 		var the_json_value = json_value !== undefined? JSON.stringify(json_value): "0";
 		var command = "echo "+the_json_value+" > "+the_path;
 		//console.log("calling ", command);
         // this should be changed eventually but should be fine for now
 		child_process.exec(command);
-	}else{
+	}else if (extension === 'js'){
+    const command = `node ${the_path}`;
+
+    the_promise = new Promise(function(resolve,reject){
+      child_process.exec(command,
+        (err,stdout,stderr)=>	{
+          let is_error = false;
+          try{
+            console.log('parsing json');
+            var json_result = JSON.parse(stdout);
+            console.log('sucessfully parsed json');
+          }catch(e){
+            console.log('errored parsing json');
+            is_error = true;
+          }
+
+          er = err;
+          is_err = is_error;
+
+          if (err === null && !is_error){
+            resolve(json_result);
+          }else{
+            console.log('oh no error');
+            console.log(err);
+            console.log(stderr);
+            reject(stderr);
+          }
+        });
+    });
+	} else{
 		the_promise = new Promise(function(resolve,reject){
         
 			var parameter = json_value === undefined? "": JSON.stringify(json_value);
@@ -74,26 +103,24 @@ var generate_action_promise = function(the_path, json_value){
 			//console.log('the path ',the_path);
 			//console.log('command ', command);
 			child_process.exec(
-            command,
-            {cwd: path.resolve(the_path, "..")},
-            (err,stdout,stderr)=>{
-
-	var is_error = false;
-	try{
-		var json_result = JSON.parse(stdout);
-                   
-	}catch(e){
-		is_error = true;
-	}
-	if (err === null && !is_error){
-		//console.log("Finished executing action success ",the_path);
-		resolve(json_result);
-	}else{
-		//console.log("Error executing action success ",the_path);
-		//console.log("expected json got ",stdout);
-		reject(stderr);
-	}
-});
+				command,
+				{cwd: path.resolve(the_path, "..")},
+				(err,stdout,stderr)=>{
+					var is_error = false;
+					try{
+						var json_result = JSON.parse(stdout);
+					}catch(e){
+						is_error = true;
+					}
+				if (err === null && !is_error){
+				//console.log("Finished executing action success ",the_path);
+					resolve(json_result);
+				}else{
+				//console.log("Error executing action success ",the_path);
+				//console.log("expected json got ",stdout);
+					reject(stderr);
+				}
+			});
 		});
 		return the_promise;
 	}

@@ -13,7 +13,7 @@ const create_routes = virtual_system => {
     res.jsonp(json);
   });
 
-  router.post('/:state_name', (req, res) => {
+  router.post('/modify/:state_name', (req, res) => {
      if (req.body === undefined){
      res.status(400).jsonp({ error: 'invalid parameters' });
      return;
@@ -21,7 +21,6 @@ const create_routes = virtual_system => {
 
      const name = req.params.state_name;
      const stateEval = req.body.stateEval;
-     c = stateEval;
      virtual_system.add_state(name, `(${stateEval})()`);
      res.status(200).send('ok');
   });

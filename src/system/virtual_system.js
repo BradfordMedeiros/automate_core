@@ -73,6 +73,25 @@ const delete_state = (name, code) => {
 };
 
 
+const add_action = (name, code) => {
+  const actionPath = path.resolve('./mock/actions', name).concat('.action.js');
+
+  const thePromise = new Promise((resolve,  reject) => {
+    fs.writeFile(actionPath, code, () => {
+      load_system('./mock').then(sys => {
+        virtual_system =  sys;
+        resolve();
+        console.log('reloaded system');
+      }).catch(reject);
+    });
+  });
+  return thePromise;
+};
+
+const delete_action = (name, code) => {
+  throw (new Error('not implemented delete action'));
+};
+
 const get_virtual_system = () => virtual_system;
 
 const onSystemLoad = func => {
@@ -85,6 +104,8 @@ module.exports = {
   delete_condition,
   add_state,
   delete_state,
+  add_action,
+  delete_action,
   get_virtual_system,
   onSystemLoad,
 };

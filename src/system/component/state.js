@@ -72,17 +72,10 @@ var generate_state_promise = function(the_path){
 		});
 	}else if (extension === 'js'){
 		const command = `node ${the_path}`;
-		c = command;
-		cwd = path.resolve(the_path, "..");
 
     the_promise = new Promise(function(resolve,reject){
-    	console.log("executing ", command);
-    	console.log('--------------------------');
       child_process.exec(command,
         (err,stdout,stderr)=>	{
-          console.log('err is ', err);
-          console.log('stdout is ', stdout);
-          console.log('stderr is ', stderr);
           let is_error = false;
           try{
           	console.log('parsing json');
