@@ -4,8 +4,10 @@ const MQTT_URL = 'http://127.0.0.1:1883';
 const client = mqtt.connect(MQTT_URL);
 
 const AUTOMATE_TOPIC_PREFIX = '/automate_sys/req/';
+const send_email = require('./email/email');
 
 client.subscribe(AUTOMATE_TOPIC_PREFIX + '#');
+client.subscribe('/event/' + '#');
 client.on('message', (topic, message) => {
   if (topic.indexOf(AUTOMATE_TOPIC_PREFIX) >= 0){
     callbackHandlers.forEach(callback => {
@@ -13,13 +15,14 @@ client.on('message', (topic, message) => {
       callback(getConditionNameFromTopic(topic),  message.toString());
     });
   }
+
+  if (topic.split('/').filter(x => x.length > 0)[0] === 'event'){
+    send_email(
+      'bradmedeiros0@gmail.com',
+      'topic '+ topic +  '<hr>message: '+message
+    );
+  }
 });
-
-const log_mqtt_message = mongo => (topic, message) => {
-  console.log('logging mqtt message');
-  mongo.collection('topics').insertOne({ topic, message: message.toString() });
-};
-
 
 const callbackHandlers = [ ];
 const onConditionToggle = callback => {
