@@ -1,0 +1,1 @@
+{"state":["time_of_day"],"action":["turn_on_light"],"eval":"time_of_day  => (time_of_day >=7 && time_of_day < 8)"}
