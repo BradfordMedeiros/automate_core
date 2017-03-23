@@ -44,7 +44,7 @@ const create_routes = virtual_system => {
     res.status(200).send('ok');
   });
 
-  router.post('/special/speech_recongition', (req, res) => {
+  router.post('/special/speech_recognition', (req, res) => {
     const THRESHOLD = 0.7;
 
     if (virtual_system.get_virtual_system().actions.length === 0){
