@@ -45,14 +45,13 @@ const create_routes = virtual_system => {
   });
 
   router.post('/special/speech_recognition', (req, res) => {
-    const THRESHOLD = 0.7;
+    const THRESHOLD = 0.6;
 
     if (virtual_system.get_virtual_system().actions.length === 0){
       res.jsonp({ response: 'no actions to perform'}).status(500);
       return;
     }
     const action_to_perform = req.body.speech;
-    r =  req.body;
     if (action_to_perform === undefined){
       res.jsonp({ response: 'invalid parameters' }).status(500);
       return;
@@ -82,6 +81,7 @@ const create_routes = virtual_system => {
 
     const action =  virtual_system.get_virtual_system().actions[maxValue.index];
     if (maxValue.max > THRESHOLD) {
+      action.execute();
       res.jsonp({ executed: true, action: action.get_name(), confidence: maxValue.max });
       return;
     }

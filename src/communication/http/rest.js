@@ -24,6 +24,10 @@ const create_routes = virtual_system => {
   router.post('/reload', (req,res) => {
     virtual_system.load_virtual_system('./mock').then(() => res.send('ok')).catch(() => res.error());
   });
+
+  router.get('/status', (req, res) => {
+    res.jsonp({ status: 'ok' });
+  });
   return router;
 };
 
