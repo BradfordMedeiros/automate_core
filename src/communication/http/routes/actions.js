@@ -52,10 +52,13 @@ const create_routes = virtual_system => {
       return;
     }
     const action_to_perform = req.body.speech;
+    r =  req.body;
     if (action_to_perform === undefined){
       res.jsonp({ response: 'invalid parameters' }).status(500);
+      return;
     }
 
+    console.log('action to perform: ', action_to_perform);
     const distances = virtual_system
       .get_virtual_system()
       .actions
