@@ -1,8 +1,9 @@
 const natural = require('natural');
 const express = require('express');
-const router = express();
 
 const create_routes = virtual_system => {
+  const router = express();
+
   router.get('/', (req, res) => {
     const actions = virtual_system.get_virtual_system().actions.map(action => ({
       name: action.get_name(),

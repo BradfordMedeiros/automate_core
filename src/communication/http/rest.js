@@ -1,10 +1,19 @@
 const express = require("express");
 const bodyParser = require('body-parser');
-const create_state_routes = require('./routes/states');
-const create_action_routes = require('./routes/actions');
-const create_condition_routes = require('./routes/conditions');
+const create_state_routes = require('./routes/system/states');
+const create_action_routes = require('./routes/system/actions');
+const create_condition_routes = require('./routes/system/conditions');
+const create_event_routes = require('./routes/events');
+const create_topic_routes = require('./routes/topics');
 
-const create_routes = virtual_system => {
+const create_routes = (virtual_system, mongoDb) => {
+  if (virtual_system === undefined) {
+    throw (new Error('virtual system undefined in call to create routes'));
+  }
+  if (mongoDb === undefined){
+    throw (new Error(' mongoDb undefined in call to create routes'));
+  }
+
   const router = express();
 
   router.use(bodyParser.json( ));
@@ -20,6 +29,8 @@ const create_routes = virtual_system => {
   router.use('/states', create_state_routes(virtual_system));
   router.use('/actions', create_action_routes(virtual_system));
   router.use('/conditions', create_condition_routes(virtual_system));
+  router.use('/events', create_event_routes(mongoDb));
+  router.use('/topics', create_topic_routes(mongoDb));
 
   router.post('/reload', (req,res) => {
     virtual_system.load_virtual_system('./mock').then(() => res.send('ok')).catch(() => res.error());

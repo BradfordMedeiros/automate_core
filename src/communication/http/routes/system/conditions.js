@@ -2,11 +2,12 @@
  * Created by brad on 3/9/17.
  */
 const express = require('express');
-const router = express();
 const fse = require('fs-extra');
 const path = require('path');
 
 const create_routes = virtual_system => {
+  const router = express();
+
   router.get('/', (req, res) => {
     const conditions = virtual_system.get_virtual_system().conditions.map(condition => ({
       name: condition.get_name(),
