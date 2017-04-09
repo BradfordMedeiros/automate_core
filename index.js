@@ -2,6 +2,7 @@
 const process = require('process');
 const path = require('path');
 const mqtt_mongo = require('mqtt_mongo');
+const fs_mount_mqtt = require('fs_mount_mqtt');
 
 const system_mqtt = require('./src/communication/mqtt_system');
 const virtual_system = require('./src/system/virtual_system');
@@ -14,6 +15,13 @@ const MQTT_MONGO_CONFIG = {
   MONGO_URL : 'mongodb://localhost:27017/myproject',
   MQTT_URL : 'http://127.0.0.1:1883'
 };
+
+const FS_MOUNT_CONFIG = {
+  MQTT_URL : 'http://127.0.0.1:1883',
+  SYNC_FOLDER_PATH: './mock',
+};
+
+fs_mount_mqtt.syncMqttToFileSystem(FS_MOUNT_CONFIG);
 
 
 virtual_system.onSystemLoad(() => {
