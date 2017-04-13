@@ -16,7 +16,7 @@ const create_routes = (virtual_system, mongoDb) => {
 
   const router = express();
 
-  router.use(bodyParser.json( ));
+  router.use(bodyParser.json());
   router.use(bodyParser.raw({ type: 'application/vnd.custom-type' }));
   router.use(bodyParser.text({ type: 'text/html' }));
 

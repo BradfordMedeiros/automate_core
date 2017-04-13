@@ -19,11 +19,14 @@ const create_routes = mongoDb => {
     }
   });
 
-  router.get('/', (req, res) => {
+  router.post('/', (req, res) => {
     const query = req.body.query;
     const options = req.body.options;
+
+    console.log('query is ', query);
     mongoDb.collection('topics').find(query, options).toArray().then(val => res.jsonp(val)).catch(() => res.status(500));
   });
+
 
   return router;
 };
