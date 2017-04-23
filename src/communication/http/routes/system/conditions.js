@@ -1,6 +1,3 @@
-/**
- * Created by brad on 3/9/17.
- */
 const express = require('express');
 const fse = require('fs-extra');
 const path = require('path');
