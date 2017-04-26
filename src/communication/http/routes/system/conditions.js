@@ -41,7 +41,6 @@ const create_routes = virtual_system => {
       return;
     }
 
-    console.log('body is ', req.body);
     const name = req.params.condition_name;
     const parameters = req.body;
     virtual_system.add_condition(name, parameters);

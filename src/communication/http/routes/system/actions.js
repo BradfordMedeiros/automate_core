@@ -58,7 +58,6 @@ const create_routes = virtual_system => {
       return;
     }
 
-    console.log('action to perform: ', action_to_perform);
     const distances = virtual_system
       .get_virtual_system()
       .actions

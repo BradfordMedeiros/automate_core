@@ -3,6 +3,7 @@ const fs = require("fs");
 const path = require('path');
 const load_system = require('./component/load_system');
 
+
 const handlers = [ ];
 
 const callHandlers = () => {
@@ -94,6 +95,36 @@ const delete_action = (name, code) => {
 
 const get_virtual_system = () => virtual_system;
 
+const createSequenceSchema = actions => {
+  if (!Array.isArray(actions)){
+    throw (new Error('invalid parameter type'));
+  }
+  actions.forEach(action => {
+    if (action.name === undefined || action.value === undefined ){
+      throw (new Error('cannot create sequence schema for bad input'));
+    }
+  });
+
+  return JSON.stringify({
+    actions,
+  })
+};
+
+const add_sequence = (name, actions)  => {
+  const sequencePath = path.resolve('./mock/sequences', name).concat('.sequence.js');
+
+  const thePromise = new Promise((resolve,  reject) => {
+    fs.writeFile(sequencePath, createSequenceSchema(actions), () => {
+      load_system('./mock').then(sys => {
+        virtual_system =  sys;
+        resolve();
+        console.log('reloaded system');
+      }).catch(reject);
+    });
+  });
+  return thePromise;
+};
+
 const onSystemLoad = func => {
   handlers.push(func);
 };
@@ -106,6 +137,7 @@ module.exports = {
   delete_state,
   add_action,
   delete_action,
+  add_sequence,
   get_virtual_system,
   onSystemLoad,
 };
