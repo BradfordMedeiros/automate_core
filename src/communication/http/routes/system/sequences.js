@@ -26,25 +26,27 @@ const create_routes = virtual_system => {
     res.status(200).send('ok');
   });
 
-  /*router.delete('/:state_name', (req, res) => {
-    const states = virtual_system.get_virtual_system()
-      .state.filter(condition => condition.get_name() === req.params.state_name);
-    if (states.length === 0){
-      res.status(404).jsonp({ error: "state not found" });
+  router.delete('/:sequence_name', (req, res) => {
+    const sequences = virtual_system.get_virtual_system()
+      .sequences.filter(sequence => sequence.get_name() === req.params.sequence_name);
+    if (sequences.length === 0){
+      res.status(404).jsonp({ error: "sequence not found" });
       return;
     }
-    else if (states.length > 1){
+    else if (sequences.length > 1){
       res.status(500).jsonp({ error: 'internal server error'});
       return;
     }
 
-    const state = states[0];
-    virtual_system.delete_state(state.get_name()).then(() => {
+    virtual_system.delete_sequence(sequences[0].get_name()).then(() => {
+      console.log('yay');
       res.status(200).send('ok');
     }).catch(() => {
+      console.log('fuckk');
       res.status(500).send({ error: 'internal server error' });
     });
-  });*/
+
+  });
 
   return router;
 };

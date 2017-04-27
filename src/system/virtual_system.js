@@ -125,6 +125,31 @@ const add_sequence = (name, actions)  => {
   return thePromise;
 };
 
+const delete_sequence = name => {
+  return (new Promise((resolve, reject) => {
+    const sequence = virtual_system
+      .sequences
+      .filter(sequence => sequence.get_name() == name);
+
+    if (sequence.length !== 1){
+      reject('Invalid sequence to delete ' + name);
+      return;
+    }
+
+    const sequencePath  = sequence[0].path;
+
+    fs.unlink(sequencePath, (err) => {
+      if (err){
+        reject('error deleting path ' + sequence[0].path);
+      }
+      load_system('./mock').then(sys => {
+        virtual_system =  sys;
+        resolve();
+      }).catch(reject);
+    });
+  }));
+};
+
 const onSystemLoad = func => {
   handlers.push(func);
 };
@@ -138,6 +163,7 @@ module.exports = {
   add_action,
   delete_action,
   add_sequence,
+  delete_sequence,
   get_virtual_system,
   onSystemLoad,
 };
