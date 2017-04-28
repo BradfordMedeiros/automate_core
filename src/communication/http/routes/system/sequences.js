@@ -6,6 +6,7 @@ const create_routes = virtual_system => {
   router.get('/', (req, res) => {
     const sequences = virtual_system.get_virtual_system().sequences.map(sequence => ({
       name: sequence.get_name(),
+      actions: sequence.actions,
     }));
 
     const json = {
@@ -39,13 +40,10 @@ const create_routes = virtual_system => {
     }
 
     virtual_system.delete_sequence(sequences[0].get_name()).then(() => {
-      console.log('yay');
       res.status(200).send('ok');
     }).catch(() => {
-      console.log('fuckk');
       res.status(500).send({ error: 'internal server error' });
     });
-
   });
 
   return router;

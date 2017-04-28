@@ -24,25 +24,22 @@ var sequence = function(the_path, actions, sequencer){
 		var base_name = path.basename(this.path);
 		return base_name.slice(0,base_name.lastIndexOf(".sequence.")); 
 	};
-        
-	this.execute = ()=>generate_sequence_promise(the_path,actions,sequencer);
-    
-     
-    
+
+	const json = JSON.parse(fse.readFileSync(the_path));
+
+	this.actions = json.actions;
+	this.execute = () => generate_sequence_promise(actions,sequencer, this.actions);
 };
 
-var generate_sequence_promise = function(sequence_path, system_actions, sequencer){
+var generate_sequence_promise = (system_actions, sequencer, sequence_actions) => {
 
-	var json = JSON.parse(fse.readFileSync(sequence_path));  
-	var sequence_actions = json.actions;
-    
+  console.log('sequence action: ', sequence_actions);
+
 	var the_sequence_promise = new Promise((resolve,reject)=>{
 		var seq = sequencer();
         
-		console.log("sequence actions length ",sequence_actions.length);
+		console.log("sequence actions length ", sequence_actions.length);
 		for (var i = 0 ; i < sequence_actions.length ; i++){
-			console.log("adding action ",i, sequence_actions[i]);
-            
 			add_sequence_step(seq, sequence_actions[i], system_actions);
 		}
 		seq.run().then((status)=>resolve(status)).catch((status)=>reject(status));
