@@ -30,7 +30,6 @@ const add_condition = (name, conditionParameters) => {
       load_system('./mock').then(sys => {
         virtual_system =  sys;
         resolve();
-        console.log('reloaded system');
       });
     });
   }).catch(reject);
@@ -44,10 +43,8 @@ const delete_condition = name => {
     load_system('./mock').then(sys =>{
       virtual_system = sys;
       resolve();
-      console.log('reloaded system');
     }).catch(() => {
       reject();
-      console.log('error reloading system');
     });
   });
   return promise;
@@ -61,7 +58,6 @@ const add_state = (name, code) => {
       load_system('./mock').then(sys => {
         virtual_system =  sys;
         resolve();
-        console.log('reloaded system');
       }).catch(reject);
     });
   });
@@ -69,7 +65,6 @@ const add_state = (name, code) => {
 };
 
 const delete_state = (name, code) => {
-  console.log('delete state called: name: ', name, ' code: ', code);
   throw (new Error('not implemented delete state'));
 };
 
@@ -83,7 +78,6 @@ const add_action = (name, code) => {
       load_system('./mock').then(sys => {
         virtual_system =  sys;
         resolve();
-        console.log('reloaded system');
       }).catch(reject);
     });
   });
@@ -92,7 +86,6 @@ const add_action = (name, code) => {
 
 const delete_action = name => {
   return (new Promise((resolve, reject) => {
-    console.log('deleting action: ', name);
     const actions = virtual_system
       .actions
       .filter(action => action.get_name() == name);
@@ -102,16 +95,12 @@ const delete_action = name => {
       return;
     }
 
-
     const actionPath  = actions[0].path;
-    console.log('path is ', actionPath);
 
     fs.unlink(actionPath, (err) => {
       if (err){
-        console.log('oh no couldnt delete');
         reject('error deleting path ' + actions[0].path);
       }
-      console.log('yay deleted');
       load_system('./mock').then(sys => {
         virtual_system =  sys;
         resolve();
@@ -145,7 +134,6 @@ const add_sequence = (name, actions)  => {
       load_system('./mock').then(sys => {
         virtual_system =  sys;
         resolve();
-        console.log('reloaded system');
       }).catch(reject);
     });
   });
