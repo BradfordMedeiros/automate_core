@@ -1,6 +1,7 @@
 const natural = require('natural');
 const express = require('express');
 
+
 const create_routes = virtual_system => {
   const router = express();
 
@@ -31,6 +32,26 @@ const create_routes = virtual_system => {
 
     const action = actions[0];
     action.execute().then(result => res.jsonp(result)).catch(() => res.status(500));
+  });
+
+  router.delete('/:action_name', (req, res) => {
+    const actions = virtual_system.get_virtual_system()
+      .actions.filter(action=> action.get_name() === req.params.action_name);
+    if (actions.length === 0){
+      res.status(404).jsonp({ error: "aciton not found" });
+      return;
+    }
+    else if (actions.length > 1){
+      res.status(500).jsonp({ error: 'internal server error'});
+      return;
+    }
+
+    console.log('about to delete----', actions[0].get_name())
+    virtual_system.delete_action(actions[0].get_name()).then(() => {
+      res.status(200).send('ok');
+    }).catch(() => {
+      res.status(500).send({ error: 'internal server error' });
+    });
   });
 
   router.post('/modify/:action_name', (req, res) => {

@@ -74,6 +74,7 @@ const delete_state = (name, code) => {
 };
 
 
+
 const add_action = (name, code) => {
   const actionPath = path.resolve('./mock/actions', name).concat('.action.js');
 
@@ -89,8 +90,34 @@ const add_action = (name, code) => {
   return thePromise;
 };
 
-const delete_action = (name, code) => {
-  throw (new Error('not implemented delete action'));
+const delete_action = name => {
+  return (new Promise((resolve, reject) => {
+    console.log('deleting action: ', name);
+    const actions = virtual_system
+      .actions
+      .filter(action => action.get_name() == name);
+
+    if (actions.length !== 1){
+      reject('Invalid action to delete ' + name);
+      return;
+    }
+
+
+    const actionPath  = actions[0].path;
+    console.log('path is ', actionPath);
+
+    fs.unlink(actionPath, (err) => {
+      if (err){
+        console.log('oh no couldnt delete');
+        reject('error deleting path ' + actions[0].path);
+      }
+      console.log('yay deleted');
+      load_system('./mock').then(sys => {
+        virtual_system =  sys;
+        resolve();
+      }).catch(reject);
+    });
+  }));
 };
 
 const get_virtual_system = () => virtual_system;
