@@ -1,19 +1,41 @@
 const natural = require('natural');
 const express = require('express');
+const fs = require('fs');
 
+const readFilePromise = filePath => new Promise((resolve, reject) => {
+  fs.readFile(filePath, (err, value) => {
+    if (err){
+      reject(err);
+    }else{
+      resolve(value.toString())
+    }
+  })
+});
 
 const create_routes = virtual_system => {
   const router = express();
 
   router.get('/', (req, res) => {
-    const actions = virtual_system.get_virtual_system().actions.map(action => ({
-      name: action.get_name(),
-    }));
 
-    const json = {
-      actions,
-    };
-    res.jsonp(json);
+    const systemActions = virtual_system.get_virtual_system().actions;
+    const fileReadContentPromise  = Promise.all(systemActions.map(action => readFilePromise(action.path)));
+    fileReadContentPromise.then(fileContent => {
+      const actions = systemActions.map((action, index) => ({
+        name: action.get_name(),
+        content: fileContent[index],
+      }));
+      const json = {
+        actions,
+      };
+      res.jsonp(json);
+
+    }).catch((err) => {
+      console.log('rejecteddd');
+      console.log(err);
+      throw(err)
+    });
+
+
   });
 
   router.post('/:action_name', (req, res) => {
