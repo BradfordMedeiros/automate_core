@@ -6,6 +6,7 @@ const create_condition_routes = require('./routes/system/conditions');
 const create_sequences_routes =  require('./routes/system/sequences');
 const create_event_routes = require('./routes/events');
 const create_topic_routes = require('./routes/topics');
+const create_core_info = require('./routes/core_info');
 
 const create_routes = (virtual_system, mongoDb) => {
   if (virtual_system === undefined) {
@@ -34,6 +35,7 @@ const create_routes = (virtual_system, mongoDb) => {
   router.use('/sequences', create_sequences_routes(virtual_system));
   router.use('/events', create_event_routes(mongoDb));
   router.use('/topics', create_topic_routes(mongoDb));
+  router.use('/info', create_core_info());
 
   router.post('/reload', (req,res) => {
     virtual_system.load_virtual_system('./mock').then(() => res.send('ok')).catch(() => res.error());
