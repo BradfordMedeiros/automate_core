@@ -15,6 +15,13 @@ const create_routes = mongoDb => {
     res.send(DEBUG_MAC_ADDRESS);
   });
 
+  router.get('/', (req, res) => {
+    res.jsonp({
+      macAddress: DEBUG_MAC_ADDRESS,
+      ipAddress: DEBUG_IP_ADDRESS,
+    })
+  });
+
   return router;
 };
 
