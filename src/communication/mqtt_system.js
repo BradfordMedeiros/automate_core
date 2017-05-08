@@ -4,7 +4,7 @@ const MQTT_URL = 'http://127.0.0.1:1883';
 const client = mqtt.connect(MQTT_URL);
 
 const AUTOMATE_TOPIC_PREFIX = '/automate_sys/req/';
-const send_email = require('./email/email');
+const send_email = require('../util/sendEmail');
 
 client.subscribe(AUTOMATE_TOPIC_PREFIX + '#');
 client.subscribe('/event/' + '#');
