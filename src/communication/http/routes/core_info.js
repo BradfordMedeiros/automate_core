@@ -6,11 +6,10 @@ const create_routes = mongoDb => {
   const router = express();
 
   router.get('/', (req, res) => {
-    getNetworkInfo(10000).then(info => {
+    getNetworkInfo(5000).then(info => {
       res.jsonp(info);
     }).catch(err => {
-      console.log('timeout')
-      res.status(500);
+      res.status(500).jsonp({ error: 'network failure'});
     })
   });
 
