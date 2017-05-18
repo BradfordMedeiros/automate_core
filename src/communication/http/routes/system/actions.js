@@ -20,9 +20,9 @@ const create_routes = virtual_system => {
     const systemActions = virtual_system.get_virtual_system().actions;
     const fileReadContentPromise  = Promise.all(systemActions.map(action => readFilePromise(action.path)));
     fileReadContentPromise.then(fileContent => {
-      sa = systemActions;
       const actions = systemActions.map((action, index) => ({
         name: action.get_name(),
+        type: action.get_type(),
         content: fileContent[index],
       }));
       const json = {
