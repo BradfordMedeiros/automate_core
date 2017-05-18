@@ -2,6 +2,7 @@
 var child_process = require("child_process");
 var path = require("path");
 var fse = require("fs-extra");
+var getType = require('./util/getFileType');
 
 var action = function (the_path){
 	this.path = path.resolve(the_path);
@@ -12,6 +13,10 @@ var action = function (the_path){
         // we consider the name the filename but not including the extension (.action.*)
 		var base_name = path.basename(this.path);
 		return base_name.slice(0,base_name.lastIndexOf(".action.")); 
+	};
+
+	this.get_type = function() {
+		return getType(this.path);
 	};
 };
 
@@ -52,20 +57,20 @@ function is_identifier(path_to_file,type){
 
 }
 
+
 // promise that executes action and resolves when complete
 var generate_action_promise = function(the_path, json_value){
-	var parts = the_path.split(".");
-  const extension = parts[parts.length-1];
+  const actionType = getType(the_path);
     
 	var the_promise = undefined;
 
-	if (extension === 'json'){
+	if (actionType === 'mqtt'){
 		var the_json_value = json_value !== undefined? JSON.stringify(json_value): "0";
 		var command = "echo "+the_json_value+" > "+the_path;
 		//console.log("calling ", command);
         // this should be changed eventually but should be fine for now
 		child_process.exec(command);
-	}else if (extension === 'js'){
+	}else if (actionType === 'javascript'){
     const command = `node ${the_path}`;
 
     the_promise = new Promise(function(resolve,reject){
