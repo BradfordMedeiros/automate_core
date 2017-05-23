@@ -51,7 +51,6 @@ const delete_condition = name => {
 };
 
 const add_state = (name, code) => {
-  console.log('add stat called: ', name , '------------------')
   const statePath = path.resolve('./mock/states', name).concat('.state.js');
 
   const thePromise = new Promise((resolve,  reject) => {

@@ -7,7 +7,9 @@ const create_routes = mongoDb => {
 
   router.get('/', (req, res) => {
     getNetworkInfo(5000).then(info => {
-      res.jsonp(info);
+      const deviceInfo = info;
+      deviceInfo.automate_core_version = '0.1';
+      res.jsonp(deviceInfo);
     }).catch(err => {
       res.status(500).jsonp({ error: 'network failure'});
     })
