@@ -1,18 +1,39 @@
 const express = require('express');
+const fs = require('fs');
+
+const readFilePromise = filePath => new Promise((resolve, reject) => {
+  fs.readFile(filePath, (err, value) => {
+    if (err){
+      reject(err);
+    }else{
+      resolve(value.toString())
+    }
+  })
+});
+
 
 const create_routes = virtual_system => {
   const router = express();
 
-  router.get('/', (req, res) => {
-    const states = virtual_system.get_virtual_system().states.map(state => ({
-      name: state.get_name(),
-      type: state.get_type(),
-    }));
+  const systemStates = virtual_system.get_virtual_system().states;
 
-    const json = {
-      states,
-    };
-    res.jsonp(json);
+  router.get('/', (req, res) => {
+    const fileReadContentPromise  = Promise.all(systemStates.map(state => readFilePromise(state.path)));
+    fileReadContentPromise.then(fileContent => {
+      const states = systemStates.map((state, index) => ({
+        name: state.get_name(),
+        type: state.get_type(),
+        content: fileContent[index],
+      }));
+      const json = {
+        states,
+      };
+      res.jsonp(json);
+
+    }).catch((err) => {
+      console.log(err);
+      throw(err)
+    });
   });
 
   router.post('/modify/:state_name', (req, res) => {
