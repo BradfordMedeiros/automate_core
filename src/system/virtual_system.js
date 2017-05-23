@@ -51,6 +51,7 @@ const delete_condition = name => {
 };
 
 const add_state = (name, code) => {
+  console.log('add stat called: ', name , '------------------')
   const statePath = path.resolve('./mock/states', name).concat('.state.js');
 
   const thePromise = new Promise((resolve,  reject) => {
@@ -65,10 +66,29 @@ const add_state = (name, code) => {
 };
 
 const delete_state = (name, code) => {
-  throw (new Error('not implemented delete state'));
+  return (new Promise((resolve, reject) => {
+    const states = virtual_system
+      .states
+      .filter(state => state.get_name() == name);
+
+    if (states.length !== 1){
+      reject('Invalid state to delete ' + name);
+      return;
+    }
+
+    const statePath  = states[0].path;
+
+    fs.unlink(statePath, (err) => {
+      if (err){
+        reject('error deleting path ' + states[0].path);
+      }
+      load_system('./mock').then(sys => {
+        virtual_system =  sys;
+        resolve();
+      }).catch(reject);
+    });
+  }));
 };
-
-
 
 const add_action = (name, code) => {
   const actionPath = path.resolve('./mock/actions', name).concat('.action.js');

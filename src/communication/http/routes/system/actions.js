@@ -68,8 +68,6 @@ const create_routes = virtual_system => {
       res.status(500).jsonp({ error: 'internal server error'});
       return;
     }
-
-    console.log('about to delete----', actions[0].get_name())
     virtual_system.delete_action(actions[0].get_name()).then(() => {
       res.status(200).send('ok');
     }).catch(() => {

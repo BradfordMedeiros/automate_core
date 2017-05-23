@@ -15,9 +15,10 @@ const readFilePromise = filePath => new Promise((resolve, reject) => {
 const create_routes = virtual_system => {
   const router = express();
 
-  const systemStates = virtual_system.get_virtual_system().states;
 
   router.get('/', (req, res) => {
+    const systemStates = virtual_system.get_virtual_system().states;
+
     const fileReadContentPromise  = Promise.all(systemStates.map(state => readFilePromise(state.path)));
     fileReadContentPromise.then(fileContent => {
       const states = systemStates.map((state, index) => ({
@@ -50,7 +51,7 @@ const create_routes = virtual_system => {
 
   router.delete('/:state_name', (req, res) => {
     const states = virtual_system.get_virtual_system()
-      .state.filter(condition => condition.get_name() === req.params.state_name);
+      .states.filter(state => state.get_name() === req.params.state_name);
     if (states.length === 0){
       res.status(404).jsonp({ error: "state not found" });
       return;
@@ -64,6 +65,7 @@ const create_routes = virtual_system => {
     virtual_system.delete_state(state.get_name()).then(() => {
       res.status(200).send('ok');
     }).catch(() => {
+      console.log('error while deleting state');
       res.status(500).send({ error: 'internal server error' });
     });
   });
