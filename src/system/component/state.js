@@ -1,6 +1,7 @@
 var child_process = require("child_process");
 var path = require("path");
 var fse = require("fs-extra");
+var getType = require('./util/getFileType');
 
 
 // figure out best way to handle this
@@ -20,6 +21,10 @@ var state = function (the_path){
 		var base_name = path.basename(this.path);
 		return base_name.slice(0,base_name.lastIndexOf(".state.")); 
 	};
+
+  this.get_type = function() {
+    return getType(this.path);
+  };
 };
 
 state.is_state = function(state_path){

@@ -6,6 +6,7 @@ const create_routes = virtual_system => {
   router.get('/', (req, res) => {
     const states = virtual_system.get_virtual_system().states.map(state => ({
       name: state.get_name(),
+      type: state.get_type(),
     }));
 
     const json = {
@@ -16,8 +17,8 @@ const create_routes = virtual_system => {
 
   router.post('/modify/:state_name', (req, res) => {
      if (req.body === undefined){
-     res.status(400).jsonp({ error: 'invalid parameters' });
-     return;
+        res.status(400).jsonp({ error: 'invalid parameters' });
+        return;
      }
 
      const name = req.params.state_name;

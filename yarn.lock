@@ -94,6 +94,10 @@ async-each@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/async-each/-/async-each-1.0.1.tgz#19d386a1d9edc6e7c1c85d388aedbcc56d33602d"
 
+async@, async@^1.5.2:
+  version "1.5.2"
+  resolved "https://registry.yarnpkg.com/async/-/async-1.5.2.tgz#ec6a61ae56480c0c3cb241c95618e20892f9672a"
+
 asynckit@^0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/asynckit/-/asynckit-0.4.0.tgz#c79ed97f7f34cb8f2ba1bc9790bcc366474b4b79"
@@ -309,7 +313,7 @@ dashdash@^1.12.0:
   dependencies:
     assert-plus "^1.0.0"
 
-debug@2.6.1, debug@^2.2.0:
+debug@2.6.1, debug@^2.1.2, debug@^2.2.0:
   version "2.6.1"
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.1.tgz#79855090ba2c4e3115cc7d8769491d58f0491351"
   dependencies:
@@ -749,7 +753,7 @@ iconv-lite@0.4.13:
   version "0.4.13"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.13.tgz#1f88aba4ab0b1508e8312acc39345f36e992e2f2"
 
-iconv-lite@0.4.15:
+iconv-lite@0.4.15, iconv-lite@^0.4.13, iconv-lite@^0.4.4:
   version "0.4.15"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.15.tgz#fe265a218ac6a57cfe854927e9d04c19825eddeb"
 
@@ -1144,25 +1148,7 @@ mqtt-packet@^5.0.0, mqtt-packet@^5.2.1:
     inherits "^2.0.3"
     process-nextick-args "^1.0.7"
 
-mqtt@^2.1.3, mqtt@^2.5.2:
-  version "2.5.2"
-  resolved "https://registry.yarnpkg.com/mqtt/-/mqtt-2.5.2.tgz#144bc595984997e4d935d25e7f216d4d4d277240"
-  dependencies:
-    commist "^1.0.0"
-    concat-stream "^1.6.0"
-    end-of-stream "^1.1.0"
-    help-me "^1.0.1"
-    inherits "^2.0.3"
-    minimist "^1.2.0"
-    mqtt-packet "^5.2.1"
-    pump "^1.0.2"
-    readable-stream "^2.2.3"
-    reinterval "^1.1.0"
-    split2 "^2.1.1"
-    websocket-stream "^3.3.3"
-    xtend "^4.0.1"
-
-mqtt@^2.4.0:
+mqtt@^2.1.3, mqtt@^2.4.0:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/mqtt/-/mqtt-2.4.0.tgz#0381594fc14095fd1f63ff8670b370f2073ee672"
   dependencies:
@@ -1179,6 +1165,24 @@ mqtt@^2.4.0:
     split2 "^2.0.1"
     websocket-stream "^3.3.2"
     xtend "^4.0.0"
+
+mqtt@^2.5.2:
+  version "2.5.2"
+  resolved "https://registry.yarnpkg.com/mqtt/-/mqtt-2.5.2.tgz#144bc595984997e4d935d25e7f216d4d4d277240"
+  dependencies:
+    commist "^1.0.0"
+    concat-stream "^1.6.0"
+    end-of-stream "^1.1.0"
+    help-me "^1.0.1"
+    inherits "^2.0.3"
+    minimist "^1.2.0"
+    mqtt-packet "^5.2.1"
+    pump "^1.0.2"
+    readable-stream "^2.2.3"
+    reinterval "^1.1.0"
+    split2 "^2.1.1"
+    websocket-stream "^3.3.3"
+    xtend "^4.0.1"
 
 mqtt_mongo@^1.0.1:
   version "1.0.1"
@@ -1207,6 +1211,13 @@ natural@^0.5.0:
     sylvester ">= 0.0.12"
     underscore ">=1.3.1"
 
+needle@1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/needle/-/needle-1.1.2.tgz#d2841a125bfd74fefb30c0344104369061c3e13a"
+  dependencies:
+    debug "^2.1.2"
+    iconv-lite "^0.4.4"
+
 negotiator@0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/negotiator/-/negotiator-0.6.1.tgz#2b327184e8992101177b28563fb5e7102acd0ca9"
@@ -1216,6 +1227,14 @@ nested-error-stacks@^1.0.0:
   resolved "https://registry.yarnpkg.com/nested-error-stacks/-/nested-error-stacks-1.0.2.tgz#19f619591519f096769a5ba9a86e6eeec823c3cf"
   dependencies:
     inherits "~2.0.1"
+
+network@^0.3.2:
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/network/-/network-0.3.2.tgz#7d985b32acf09f8e44140a7d54fcc1b7e138b053"
+  dependencies:
+    async "^1.5.2"
+    needle "1.1.2"
+    wmic "^0.1.0"
 
 node-pre-gyp@^0.6.29:
   version "0.6.33"
@@ -1918,6 +1937,13 @@ wide-align@^1.1.0:
   resolved "https://registry.yarnpkg.com/wide-align/-/wide-align-1.1.0.tgz#40edde802a71fea1f070da3e62dcda2e7add96ad"
   dependencies:
     string-width "^1.0.1"
+
+wmic@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/wmic/-/wmic-0.1.0.tgz#78b41ab11d154cb812819e1291674dad55d8e1d7"
+  dependencies:
+    async ""
+    iconv-lite "^0.4.13"
 
 wrappy@1:
   version "1.0.2"
