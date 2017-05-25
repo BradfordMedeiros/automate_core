@@ -25,6 +25,7 @@
     "express": "^4.15.0",
     "fs-extra": "^1.0.0",
     "fs_mount_mqtt": "^1.0.1",
+    "mosca": "^2.5.1",
     "mqtt": "^2.4.0",
     "mqtt_mongo": "^1.0.1",
     "natural": "^0.5.0",

@@ -4,6 +4,7 @@ const path = require('path');
 const mqtt_mongo = require('mqtt_mongo');
 const fs_mount_mqtt = require('fs_mount_mqtt');
 
+const startMqttBroker = require('./src/mqttBroker');
 const system_mqtt = require('./src/communication/mqtt_system');
 const virtual_system = require('./src/system/virtual_system');
 const create_routes = require('./src/communication/http/rest');
@@ -21,6 +22,7 @@ const FS_MOUNT_CONFIG = {
   SYNC_FOLDER_PATH: './mock',
 };
 
+startMqttBroker();
 fs_mount_mqtt.syncMqttToFileSystem(FS_MOUNT_CONFIG);
 
 
