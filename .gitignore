@@ -2,3 +2,4 @@
 /node_modules/*
 /mock/*
 /db/*
+npm-debug.log
