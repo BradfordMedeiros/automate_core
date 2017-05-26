@@ -4,16 +4,19 @@ const path = require('path');
 const mqtt_mongo = require('mqtt_mongo');
 const fs_mount_mqtt = require('fs_mount_mqtt');
 
-const startMqttBroker = require('./src/mqttBroker');
+const startMqttBroker = require('./src/environment/startMqttBroker');
+const startMongo = require('./src/environment/startMongo');
+
 const system_mqtt = require('./src/communication/mqtt_system');
 const virtual_system = require('./src/system/virtual_system');
 const create_routes = require('./src/communication/http/rest');
 
 
 const PORT = 9000;
+const MONGO_PORT = 6302;
 
 const MQTT_MONGO_CONFIG = {
-  MONGO_URL : 'mongodb://localhost:27017/myproject',
+  MONGO_URL : `mongodb://localhost:${MONGO_PORT}/myproject`,
   MQTT_URL : 'http://127.0.0.1:1883'
 };
 
@@ -22,39 +25,55 @@ const FS_MOUNT_CONFIG = {
   SYNC_FOLDER_PATH: './mock',
 };
 
-startMqttBroker();
-fs_mount_mqtt.syncMqttToFileSystem(FS_MOUNT_CONFIG);
-
-
-virtual_system.onSystemLoad(() => {
-  system_mqtt.publishConditionNames(virtual_system.get_virtual_system().conditions)
+const startMqttBrokerPromise = startMqttBroker();
+startMqttBrokerPromise.then(() => {
+  console.log('mqtt broker started');
+});
+const startMongoPromise = startMongo(MONGO_PORT, './db');
+startMongoPromise.then(() => {
+  console.log('mongod started');
 });
 
-virtual_system.load_virtual_system(path.resolve('./mock')).then(() => {
-  console.log('virtual system init');
+Promise.all([startMongoPromise,  startMongoPromise]).then(() => {
 
-  mqtt_mongo.logMqttToMongo(MQTT_MONGO_CONFIG).then(({ mongoDb, client }) => {
-    console.log('logging mqtt to mongo');
-    const router = create_routes(virtual_system, mongoDb);
-    router.listen(PORT, () => console.log("Server start on port "+ PORT));
+  console.log('Environment started');
+  fs_mount_mqtt.syncMqttToFileSystem(FS_MOUNT_CONFIG);
 
-    system_mqtt.onConditionToggle((conditionName, message) => {
-      const matchingConditions = virtual_system.get_virtual_system()
-        .conditions
-        .filter(condition => condition.get_name() === conditionName);
+  virtual_system.onSystemLoad(() => {
+    system_mqtt.publishConditionNames(virtual_system.get_virtual_system().conditions)
+  });
 
-      if (matchingConditions.length === 1){
-        const matchingCondition = matchingConditions[0];
-        if (message === 'on') {
-          matchingCondition.resume();
-        }else if (message === 'off'){
-          matchingCondition.pause();
+  virtual_system.load_virtual_system(path.resolve('./mock')).then(() => {
+    console.log('virtual system init');
+
+    mqtt_mongo.logMqttToMongo(MQTT_MONGO_CONFIG).then(({mongoDb, client}) => {
+      console.log('logging mqtt to mongo');
+      const router = create_routes(virtual_system, mongoDb);
+      router.listen(PORT, () => console.log("Server start on port " + PORT));
+
+      system_mqtt.onConditionToggle((conditionName, message) => {
+        const matchingConditions = virtual_system.get_virtual_system()
+          .conditions
+          .filter(condition => condition.get_name() === conditionName);
+
+        if (matchingConditions.length === 1) {
+          const matchingCondition = matchingConditions[0];
+          if (message === 'on') {
+            matchingCondition.resume();
+          } else if (message === 'off') {
+            matchingCondition.pause();
+          }
         }
-      }
+      });
+    }).catch(err => {
+      throw (new Error(err));
     });
-  }).catch(err => { throw (new Error(err)); });
-}).catch(err => {
-  console.log(err);
-  process.exit(1);  // might not be great for prod but definitely good for dev
+  }).catch(err => {
+    console.log(err);
+    process.exit(1);  // might not be great for prod but definitely good for dev
+  });
+}).catch((err) => {
+  console.error('could not start environment')
+  console.error(err);
 });
 
