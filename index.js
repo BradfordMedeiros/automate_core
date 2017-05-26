@@ -43,8 +43,6 @@ Promise.all([startMongoPromise,  startMongoPromise]).then(() => {
   });
 
   virtual_system.load_virtual_system(path.resolve('./mock')).then(() => {
-    console.log('virtual system init');
-
     mqtt_mongo.logMqttToMongo(MQTT_MONGO_CONFIG).then(({mongoDb, client}) => {
       const router = create_routes(virtual_system, mongoDb);
       router.listen(PORT, () => console.log("Server start on port " + PORT));

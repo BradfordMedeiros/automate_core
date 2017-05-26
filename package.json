@@ -1,7 +1,7 @@
 {
   "name": "automate_core",
   "version": "1.0.0",
-  "description": "An engine specifically geared to tooling to create smart home-automation. Works through file system mounting and configuration, or as node.js libraries.",
+  "description": "Backend for automate_ui",
   "main": "index.js",
   "private": true,
   "directories": {
@@ -16,8 +16,7 @@
     "type": "git",
     "url": "git+https://github.com/BradfordMedeiros/automate_core.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "bradfordmedeiros",
   "bugs": {
     "url": "https://github.com/BradfordMedeiros/automate_core/issues"
   },
