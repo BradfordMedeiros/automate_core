@@ -35,7 +35,6 @@ startMongoPromise.then(() => {
 });
 
 Promise.all([startMongoPromise,  startMongoPromise]).then(() => {
-
   console.log('Environment started');
   fs_mount_mqtt.syncMqttToFileSystem(FS_MOUNT_CONFIG);
 
@@ -47,7 +46,6 @@ Promise.all([startMongoPromise,  startMongoPromise]).then(() => {
     console.log('virtual system init');
 
     mqtt_mongo.logMqttToMongo(MQTT_MONGO_CONFIG).then(({mongoDb, client}) => {
-      console.log('logging mqtt to mongo');
       const router = create_routes(virtual_system, mongoDb);
       router.listen(PORT, () => console.log("Server start on port " + PORT));
 
@@ -66,14 +64,15 @@ Promise.all([startMongoPromise,  startMongoPromise]).then(() => {
         }
       });
     }).catch(err => {
-      throw (new Error(err));
+      console.log(err);
+      process.exit(1);
     });
   }).catch(err => {
     console.log(err);
     process.exit(1);  // might not be great for prod but definitely good for dev
   });
 }).catch((err) => {
-  console.error('could not start environment')
   console.error(err);
+  process.exit(1);
 });
 

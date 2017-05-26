@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "An engine specifically geared to tooling to create smart home-automation. Works through file system mounting and configuration, or as node.js libraries.",
   "main": "index.js",
+  "private": true,
   "directories": {
     "example": "examples"
   },
@@ -28,7 +29,7 @@
     "fs_mount_mqtt": "^1.0.1",
     "mosca": "^2.5.1",
     "mqtt": "^2.4.0",
-    "mqtt_mongo": "^1.0.1",
+    "mqtt_mongo": "^1.0.3",
     "natural": "^0.5.0",
     "network": "^0.3.2",
     "nodemon": "^1.11.0",
