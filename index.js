@@ -27,23 +27,32 @@ const FS_MOUNT_CONFIG = {
 
 const startMqttBrokerPromise = startMqttBroker();
 startMqttBrokerPromise.then(() => {
-  console.log('mqtt broker started');
+  console.log('MQTT Broker Started');
+}).catch(() => {
+  console.error('Error: Could not start MQTT Started');
 });
-const startMongoPromise = startMongo(MONGO_PORT, './db');
+
+const startMongoPromise = startMongo(MONGO_PORT, './data', 2000);
 startMongoPromise.then(() => {
-  console.log('mongod started');
+  console.log('Mongod Started');
+}).catch(err => {
+  console.error('Error: Could not start Mongod Started');
+  console.error(err);
 });
 
 Promise.all([startMongoPromise,  startMongoPromise]).then(() => {
-  console.log('Environment started');
+  console.log('Environment Started');
   fs_mount_mqtt.syncMqttToFileSystem(FS_MOUNT_CONFIG);
 
   virtual_system.onSystemLoad(() => {
     system_mqtt.publishConditionNames(virtual_system.get_virtual_system().conditions)
   });
 
+
   virtual_system.load_virtual_system(path.resolve('./mock')).then(() => {
     mqtt_mongo.logMqttToMongo(MQTT_MONGO_CONFIG).then(({mongoDb, client}) => {
+      console.log('MongoDb client connected');
+
       const router = create_routes(virtual_system, mongoDb);
       router.listen(PORT, () => console.log("Server start on port " + PORT));
 
@@ -62,15 +71,16 @@ Promise.all([startMongoPromise,  startMongoPromise]).then(() => {
         }
       });
     }).catch(err => {
-      console.log(err);
-      process.exit(1);
+      console.log('Could not connect Mongo or MQTT client');
+      //process.exit(1);
     });
   }).catch(err => {
-    console.log(err);
+    console.log('Could not load virtual system');
     process.exit(1);  // might not be great for prod but definitely good for dev
   });
+
 }).catch((err) => {
-  console.error(err);
+  console.error('oh no');
   process.exit(1);
 });
 

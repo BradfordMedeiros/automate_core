@@ -33,12 +33,9 @@ var sequence = function(the_path, actions, sequencer){
 
 var generate_sequence_promise = (system_actions, sequencer, sequence_actions) => {
 
-  console.log('sequence action: ', sequence_actions);
-
 	var the_sequence_promise = new Promise((resolve,reject)=>{
 		var seq = sequencer();
         
-		console.log("sequence actions length ", sequence_actions.length);
 		for (var i = 0 ; i < sequence_actions.length ; i++){
 			add_sequence_step(seq, sequence_actions[i], system_actions);
 		}
@@ -62,9 +59,6 @@ var add_sequence_step = function(sequencer, action, system_actions){
 };
 
 var add_wait_step = function(sequencer, action){
-
-	console.log("add wait step");
-	console.log(action);
 	if (action.value === undefined){
 		throw (new Error("no value wait defined"));
 	}else{
@@ -75,8 +69,6 @@ var add_wait_step = function(sequencer, action){
 
 var add_action_step = function(sequencer, action, system_actions){
 
-	console.log("add action step");
-    
     // get the individual system action that matches the json action
 	var matching_actions  = system_actions.filter (the_action=> the_action.get_name() === action.value);
 	if (matching_actions.length !== 1){
@@ -93,9 +85,7 @@ var add_action_step = function(sequencer, action, system_actions){
 	if (has_options){
 		number_of_times_to_loop = action.options.loop !== undefined? parseInt(action.options.loop) :1;
 		delay = action.options.delay; 
-        
-		console.log("loop is ", number_of_times_to_loop);
-		console.log("delay is ", delay);
+
 		if (Number.isNaN(number_of_times_to_loop) || Number.isNaN(delay)){
 			throw (new Error("options for action ",action.get_name(), " are invalid"));
 		}   
@@ -143,11 +133,9 @@ var load_sequence_path = function(sys_sequence_folder, actions ,sequencer){
 	var promise = new Promise(function(resolve,reject){
 		fse.walk(sys_sequence_folder).on("data",(file)=>{            
 			if (sequence.is_sequence(file.path)){
-				console.log("added sequence:  "+file.path);
 				sequences.push(new sequence(file.path,actions,sequencer));
 			}
 		}).on("end",()=>{
-			console.log("done adding sequences");
 			resolve(sequences);
 		});
 	});

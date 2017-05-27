@@ -3,3 +3,4 @@
 /mock/*
 /db/*
 npm-debug.log
+/data/*

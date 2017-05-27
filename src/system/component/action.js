@@ -30,11 +30,9 @@ var load_actions_path = function(sys_condition_folder){
 	var promise = new Promise(function(resolve) {
 		fse.walk(sys_condition_folder).on("data",(file)=>{            
 			if (action.is_action(file.path)){
-				console.log("added action:  "+file.path);
 				actions.push(new action(file.path));
 			}
 		}).on("end",()=>{
-			console.log("done adding actions");
 			resolve(actions);
 		});
 	});
@@ -67,7 +65,6 @@ var generate_action_promise = function(the_path, json_value){
 	if (actionType === 'mqtt'){
 		var the_json_value = json_value !== undefined? JSON.stringify(json_value): "0";
 		var command = "echo "+the_json_value+" > "+the_path;
-		//console.log("calling ", command);
         // this should be changed eventually but should be fine for now
 		child_process.exec(command);
 	}else if (actionType === 'javascript'){
@@ -78,11 +75,8 @@ var generate_action_promise = function(the_path, json_value){
         (err,stdout,stderr)=>	{
           let is_error = false;
           try{
-            console.log('parsing json');
             var json_result = JSON.parse(stdout);
-            console.log('sucessfully parsed json');
           }catch(e){
-            console.log('errored parsing json');
             is_error = true;
           }
 
@@ -92,9 +86,6 @@ var generate_action_promise = function(the_path, json_value){
           if (err === null && !is_error){
             resolve(json_result);
           }else{
-            console.log('oh no error');
-            console.log(err);
-            console.log(stderr);
             reject(stderr);
           }
         });
@@ -105,8 +96,6 @@ var generate_action_promise = function(the_path, json_value){
 			var parameter = json_value === undefined? "": JSON.stringify(json_value);
 			var command = the_path + " " + parameter;
 
-			//console.log('the path ',the_path);
-			//console.log('command ', command);
 			child_process.exec(
 				command,
 				{cwd: path.resolve(the_path, "..")},
@@ -118,11 +107,8 @@ var generate_action_promise = function(the_path, json_value){
 						is_error = true;
 					}
 				if (err === null && !is_error){
-				//console.log("Finished executing action success ",the_path);
 					resolve(json_result);
 				}else{
-				//console.log("Error executing action success ",the_path);
-				//console.log("expected json got ",stdout);
 					reject(stderr);
 				}
 			});

@@ -83,11 +83,8 @@ var generate_state_promise = function(the_path){
         (err,stdout,stderr)=>	{
           let is_error = false;
           try{
-          	console.log('parsing json');
             var json_result = JSON.parse(stdout);
-						console.log('sucessfully parsed json');
           }catch(e){
-          	console.log('errored parsing json');
             is_error = true;
           }
 
@@ -97,9 +94,6 @@ var generate_state_promise = function(the_path){
           if (err === null && !is_error){
             resolve(json_result);
           }else{
-          	console.log('oh no error');
-          	console.log(err);
-          	console.log(stderr);
             reject(stderr);
           }
         });
@@ -136,7 +130,6 @@ var load_states_path = function(sys_condition_folder){
 	var promise = new Promise(function(resolve,reject){
 		fse.walk(sys_condition_folder).on("data",(file)=>{            
 			if (state.is_state(file.path)){
-				console.log("added state:  "+file.path);
 				states.push(new state(file.path));
 			}
 		}).on("end",()=>{

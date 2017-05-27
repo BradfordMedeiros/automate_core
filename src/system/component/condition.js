@@ -133,7 +133,7 @@ function generate_eval_for_condition(states, json_condition){
 			});
 		}
 	}).catch((x)=>{
-		console.log("error :",x);
+		the_rejecter(x);
 	});
 	return public_promise;
 }
