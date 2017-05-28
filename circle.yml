@@ -1,4 +1,7 @@
+machine:
+  node:
+    version: 6.2.1
 compile:
   override:
-    npm run build
-    cp automate_core.tar.gz $CIRCLE_ARTIFACTS
+    - npm run build
+    - cp automate_core.tar.gz $CIRCLE_ARTIFACTS
