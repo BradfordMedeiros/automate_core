@@ -10,6 +10,7 @@
   "scripts": {
     "start": "node index.js",
     "start-dev": "NODE_ENV=development nodemon index.js --watch src --exec",
+    "build": "yarn install && DIRECTORY=$PWD && cd .. && tar -czvf automate_core.tar.gz $DIRECTORY && mv automate_core.tar.gz $DIRECTORY",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
