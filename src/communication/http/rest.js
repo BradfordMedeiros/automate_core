@@ -7,6 +7,7 @@ const create_sequences_routes =  require('./routes/system/sequences');
 const create_event_routes = require('./routes/events');
 const create_topic_routes = require('./routes/topics');
 const create_core_info = require('./routes/core_info');
+const create_static_routes = require('./routes/static_routes');
 
 const create_routes = (virtual_system, mongoDb) => {
   if (virtual_system === undefined) {
@@ -29,6 +30,7 @@ const create_routes = (virtual_system, mongoDb) => {
     next();
   });
 
+  router.use(create_static_routes());
   router.use('/states', create_state_routes(virtual_system));
   router.use('/actions', create_action_routes(virtual_system));
   router.use('/conditions', create_condition_routes(virtual_system));
