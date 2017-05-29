@@ -43,7 +43,7 @@ startMongoPromise.then(() => {
 
 startSSHServer().then(() => console.log('wetty started')).catch(() => console.log('wetty no start'));
 
-Promise.all([startMongoPromise,  startMongoPromise]).then(() => {
+Promise.all([startMongoPromise,  startMqttBrokerPromise]).then(() => {
   console.log('Environment Started');
   fs_mount_mqtt.syncMqttToFileSystem(FS_MOUNT_CONFIG);
 
@@ -75,7 +75,8 @@ Promise.all([startMongoPromise,  startMongoPromise]).then(() => {
       });
     }).catch(err => {
       console.log('Could not connect Mongo or MQTT client');
-      //process.exit(1);
+      console.error(err);
+      process.exit(1);
     });
   }).catch(err => {
     console.log('Could not load virtual system');
