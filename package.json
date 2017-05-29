@@ -34,6 +34,7 @@
     "network": "^0.3.2",
     "nodemon": "^1.11.0",
     "sendmail": "^1.1.1",
+    "wetty": "https://github.com/BradfordMedeiros/wetty.git",
     "when_do": "^1.0.3"
   }
 }
