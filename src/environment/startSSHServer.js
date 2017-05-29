@@ -4,15 +4,21 @@ const wetty = require('wetty');
 const startWetty = port => {
   return (
     new Promise((resolve, reject) => {
-      let wettyStarted = false;
       const handle = setTimeout(() => {
         reject();
       }, 4000);
 
+      let hasErrored = false;
       wetty.startSSH({port: 9001}, {
         onServerListen: () => {
           clearTimeout(handle);
           resolve();
+        },
+        onTerminalError: () => {
+          if (!hasErrored){
+            hasErrored = true;
+            reject();
+          }
         }
       });
     })

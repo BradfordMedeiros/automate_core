@@ -6,7 +6,7 @@ const fs_mount_mqtt = require('fs_mount_mqtt');
 
 const startMqttBroker = require('./src/environment/startMqttBroker');
 const startMongo = require('./src/environment/startMongo');
-const startWetty = require('./src/environment/startWetty');
+const startSSHServer = require('./src/environment/startSSHServer');
 
 const system_mqtt = require('./src/communication/mqtt_system');
 const virtual_system = require('./src/system/virtual_system');
@@ -41,7 +41,7 @@ startMongoPromise.then(() => {
   console.error(err);
 });
 
-startWetty().then(() => console.log('wetty started')).catch(() => console.log('wetty no start'));
+startSSHServer().then(() => console.log('wetty started')).catch(() => console.log('wetty no start'));
 
 Promise.all([startMongoPromise,  startMongoPromise]).then(() => {
   console.log('Environment Started');
