@@ -4,10 +4,13 @@ const MQTT_URL = 'http://127.0.0.1:1883';
 const client = mqtt.connect(MQTT_URL);
 
 const AUTOMATE_TOPIC_PREFIX = '/automate_sys/req/';
-const send_email = require('../util/sendEmail');
+const send_email = require('../util/email/sendEmail');
 
 client.subscribe(AUTOMATE_TOPIC_PREFIX + '#');
+
 client.subscribe('/event/' + '#');
+client.subscribe('event/' + '#'); // seems like these are treated differently unfortunately
+
 client.on('message', (topic, message) => {
   if (topic.indexOf(AUTOMATE_TOPIC_PREFIX) >= 0){
     callbackHandlers.forEach(callback => {
