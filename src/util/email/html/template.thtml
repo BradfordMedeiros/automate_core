@@ -1,14 +1,15 @@
 
 
 
-<div style="background: rgb(160,160,160); height: 500px; width: 100%;  border: 1px solid rgb(120,120,120);">
+<div style="background: rgb(60,60,60); height: 500px; width: 100%">
     <div style="
+    border-bottom:1px solid black;
     padding: 20px;
+    background: linear-gradient(rgb(60,60,60),rgb(50,50,50));
     display: flex;
     justify-content: center;
-    color: rgb(140,140,140);
+    color: rgb(210,210,210);
     box-shadow: 0px 0px 1px 0.1px black;
-    background:white;
     "
     >automate event</div>
     <div style="
@@ -16,29 +17,25 @@
     ">
         <div style="
             display: flex;
-            font-size: 14px;
+            font-size: 18px;
             margin: 5%;
-            border-left: 1px dotted rgba(0, 0, 0, 0.5);
+            border: 1px solid black;
             padding: 30px;
             padding-left: 40px;
-            border: 1px solid rgb(140,140,140);
-
         ">
-            <div style="margin-right: 50px; font-size: 24px; text-shadow: 0px 0.1px 0.1px black; ">topic: </div>
-            <div style="padding-top:4px;">{event_name}</div>
+            <div style="margin-right: 50px;">Topic: </div>
+            <div>/event/thing/go</div>
         </div>
         <div style="
             display: flex;
-            font-size: 14px;
+            font-size: 18px;
             margin: 5%;
-            border-left: 1px dotted rgba(0, 0, 0, 0.5);
+            border: 1px solid black;
             padding: 30px;
             padding-left: 40px;
-            border: 1px solid rgb(140,140,140);
-
         ">
-            <div style="margin-right: 50px;font-size: 24px;text-shadow: 0px 0.1px 0.1px black;">message: </div>
-            <div style="padding-top:4px;">{event_message}</div>
+            <div style="margin-right: 50px;">message: </div>
+            <div>Cat was fed</div>
         </div>
 
         <div style="
