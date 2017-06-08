@@ -11,12 +11,16 @@ var load_conditions_path = require("./condition.js");
 //var load_sequences_path = require("./sequence.js");
 
 
-var system = function(actions,states,conditions, sequences){
+const load_engines = require('./engines/loadEngines');
+
+
+var system = function(actions,states,conditions, sequences, engines){
 	
 	this.actions = actions;    // path of various actions available
 	this.states = states;
 	this.conditions = conditions; // path of various conditions available
 	//this.sequences = sequences;
+	this.engines = engines;
 
 	this.destroy =  function() {
 		/*if (this.conditions){
@@ -24,7 +28,9 @@ var system = function(actions,states,conditions, sequences){
     }*/
     this.actions = undefined;
     this.states = undefined;
+
     this.conditions = undefined;
+
     //this.sequences = undefined;
 	};
 
@@ -53,6 +59,10 @@ var load_system_from_path = function(sys_when_do_root_folder){
 
 	var conditions = load_conditions_path(path.resolve(sys_when_do_root_folder, "conditions"));
 	conditions.then((c) => the_system.conditions = c);
+
+
+	var engines = load_engines(path.resolve(sys_when_do_root_folder, 'engines'));
+	engines.then((e) =>  the_system.engines = e);
     
     // we need to load states and actions before we can load conditions since conditions 
     // are directly dependent on states and actions

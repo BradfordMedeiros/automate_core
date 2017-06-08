@@ -14,7 +14,6 @@ const generateIsTrue = filePath => {
   const fileValue = fs.readFileSync(filePath).toString();
   const conditionEval =  eval(transformConditionFileToFunction(fileValue));
   return () => {
-    console.log('value: ', conditionEval());
     return conditionEval()  == true;
   }
 };
