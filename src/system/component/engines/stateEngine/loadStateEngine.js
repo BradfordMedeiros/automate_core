@@ -15,7 +15,7 @@ const load_state_engine_path = function(sys_folder){
     fse.walk(sys_folder).on("data",(file)=>{
       if (is_state_engine_script(file.path)){
         console.log('found state script');
-        state_scripts.push(createStateScript(file.path));
+        state_scripts.push(createStateScript(file.path, sys_folder));
       }
     }).on("end",()=>{
       console.log('done loading scripts');

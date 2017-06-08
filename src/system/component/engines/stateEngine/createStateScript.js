@@ -1,5 +1,7 @@
 
 const fs = require('fs');
+const getTopicName = require('../util/getAxiomTopic');
+
 
 const transformScriptToFunction = stateString => {
   const stateFunction =  (
@@ -16,10 +18,11 @@ const generateIsTrue = filePath => {
   return stateEval;
 };
 
-const loadStateScript = filePath => {
+const loadStateScript = (filePath, stateScriptFolder) => {
   const get_value = generateIsTrue(filePath);
   return ({
     path: filePath,
+    get_name:  () => getTopicName(filePath, stateScriptFolder),
     get_value,
   });
 };
