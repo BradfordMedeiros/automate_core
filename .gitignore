@@ -4,3 +4,5 @@
 /db/*
 npm-debug.log
 /data/*
+.idea/*
+public/bundle.js
