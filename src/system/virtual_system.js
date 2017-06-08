@@ -13,6 +13,7 @@ const callHandlers = () => {
 
 let virtual_system = undefined;
 const load_virtual_system =(system_folder) => {
+  console.log('load virtual system--------------------');
   if (virtual_system){
     virtual_system.destroy();
   }
@@ -23,6 +24,8 @@ const load_virtual_system =(system_folder) => {
 };
 
 const add_condition = (name, conditionParameters) => {
+  console.log('add condition --------------------');
+
   const conditionPath = path.resolve('./mock/conditions', name).concat('.condition.json');
 
   const thePromise = new Promise((resolve,  reject) => {
@@ -37,6 +40,8 @@ const add_condition = (name, conditionParameters) => {
 };
 
 const delete_condition = name => {
+  console.log('delete condition -------------------');
+
   const conditionToDeletePath = virtual_system.conditions.filter(condition  => condition.get_name() === name)[0].path;
   fs.unlink(conditionToDeletePath);
   const promise = new Promise((resolve, reject) => {
@@ -51,20 +56,29 @@ const delete_condition = name => {
 };
 
 const add_state = (name, code) => {
+  console.log('add state --------------------');
+
   const statePath = path.resolve('./mock/states', name).concat('.state.js');
 
   const thePromise = new Promise((resolve,  reject) => {
-    fs.writeFile(statePath, code, () => {
-      load_system('./mock').then(sys => {
-        virtual_system =  sys;
-        resolve();
-      }).catch(reject);
+    fs.writeFile(statePath, code, err => {
+      if (err){
+        console.log('err')
+        reject();
+      }else{
+        load_system('./mock').then(sys => {
+          virtual_system =  sys;
+          resolve();
+        }).catch(reject);
+      }
     });
   });
   return thePromise;
 };
 
 const delete_state = (name, code) => {
+  console.log('delete state --------------------');
+
   return (new Promise((resolve, reject) => {
     const states = virtual_system
       .states
@@ -90,6 +104,8 @@ const delete_state = (name, code) => {
 };
 
 const add_action = (name, code) => {
+  console.log('add action --------------------');
+
   const actionPath = path.resolve('./mock/actions', name).concat('.action.js');
 
   const thePromise = new Promise((resolve,  reject) => {
@@ -104,6 +120,8 @@ const add_action = (name, code) => {
 };
 
 const delete_action = name => {
+  console.log('delete action --------------------');
+
   return (new Promise((resolve, reject) => {
     const actions = virtual_system
       .actions

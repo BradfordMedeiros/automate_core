@@ -8,7 +8,7 @@ var sequencer = require("when_do").sequencer;
 var load_actions_path = require("./action.js");
 var load_states_path = require("./state.js");
 var load_conditions_path = require("./condition.js");
-var load_sequences_path = require("./sequence.js");
+//var load_sequences_path = require("./sequence.js");
 
 
 var system = function(actions,states,conditions, sequences){
@@ -16,16 +16,16 @@ var system = function(actions,states,conditions, sequences){
 	this.actions = actions;    // path of various actions available
 	this.states = states;
 	this.conditions = conditions; // path of various conditions available
-	this.sequences = sequences;
+	//this.sequences = sequences;
 
 	this.destroy =  function() {
-		if (this.conditions){
+		/*if (this.conditions){
 			this.conditions.forEach( condition => condition.stop());
-    }
+    }*/
     this.actions = undefined;
     this.states = undefined;
     this.conditions = undefined;
-    this.sequences = undefined;
+    //this.sequences = undefined;
 	};
 
 };
@@ -50,11 +50,14 @@ var load_system_from_path = function(sys_when_do_root_folder){
 
 	var states = load_states_path (path.resolve(sys_when_do_root_folder,"states"));
 	states.then((s) => the_system.states = s);
+
+	var conditions = load_conditions_path(path.resolve(sys_when_do_root_folder, "conditions"));
+	conditions.then((c) => the_system.conditions = c);
     
     // we need to load states and actions before we can load conditions since conditions 
     // are directly dependent on states and actions
-	Promise.all([actions,states]).then(()=>{
-		const conditions = load_conditions_path(
+	Promise.all([actions,states, conditions]).then(()=>{
+		/*const conditions = load_conditions_path(
             the_system.states,
             the_system.actions,
             path.resolve(sys_when_do_root_folder,"conditions"));
@@ -66,13 +69,14 @@ var load_system_from_path = function(sys_when_do_root_folder){
 		var sequences = load_sequences_path(
            path.resolve(sys_when_do_root_folder, "sequences"),
            the_system.actions,
-           sequencer);
+           sequencer);*/
            
-		sequences.then((s)=>{
+		/*sequences.then((s)=>{
 			the_system.sequences = s;
-		}).catch(rejector);
+		}).catch(rejector);*/
         
-		Promise.all([conditions, sequences]).then(()=>resolver(the_system));
+		//Promise.all([conditions, sequences]).then(()=>resolver(the_system));
+		resolver(the_system);
 	});
 	return system_loaded_promise;
 };

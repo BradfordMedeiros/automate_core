@@ -14,12 +14,15 @@ const processTemplate = (template, {event_name, event_message} ) => {
 };
 
 const send_email = (email_address, message) => {
+
+  const html = processTemplate(template, { event_name: 'Cat Door Opened Mo', event_message: 'Door is now open' });
+  console.log('html: ', html);
   return new Promise((resolve, reject) => {
     sendmail({
       from: 'Automate@automate.com',
       to: email_address,
       subject: 'Event- Topic: (topic), message: (message)',
-      html:  processTemplate(template, { event_name: 'Cat Door Opened Mo', event_message: 'SDoor is now open' }),
+      html,
     }, (err, reply) => {
       if (err) {
         reject(err);

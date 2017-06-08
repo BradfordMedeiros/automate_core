@@ -19,6 +19,7 @@ client.on('message', (topic, message) => {
     });
   }
 
+  console.log('got nessage');
   if (topic.split('/').filter(x => x.length > 0)[0] === 'event'){
     send_email(
       'bradmedeiros0@gmail.com',

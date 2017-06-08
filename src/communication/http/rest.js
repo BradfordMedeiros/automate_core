@@ -32,9 +32,9 @@ const create_routes = (virtual_system, mongoDb) => {
 
   router.use(create_static_routes());
   router.use('/states', create_state_routes(virtual_system));
-  router.use('/actions', create_action_routes(virtual_system));
-  router.use('/conditions', create_condition_routes(virtual_system));
-  router.use('/sequences', create_sequences_routes(virtual_system));
+  //router.use('/actions', create_action_routes(virtual_system));
+  //router.use('/conditions', create_condition_routes(virtual_system));
+  //router.use('/sequences', create_sequences_routes(virtual_system));
   router.use('/events', create_event_routes(mongoDb));
   router.use('/topics', create_topic_routes(mongoDb));
   router.use('/info', create_core_info());

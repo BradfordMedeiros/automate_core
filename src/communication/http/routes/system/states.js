@@ -45,7 +45,7 @@ const create_routes = virtual_system => {
 
      const name = req.params.state_name;
      const stateEval = req.body.stateEval;
-     virtual_system.add_state(name, `(${stateEval})()`);
+     virtual_system.add_state(name, stateEval);
      res.status(200).send('ok');
   });
 
