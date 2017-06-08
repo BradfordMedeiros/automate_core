@@ -13,7 +13,10 @@ const transformConditionFileToFunction = conditionString => {
 const generateIsTrue = filePath => {
   const fileValue = fs.readFileSync(filePath).toString();
   const conditionEval =  eval(transformConditionFileToFunction(fileValue));
-  return conditionEval;
+  return () => {
+    console.log('value: ', conditionEval());
+    return conditionEval()  == true;
+  }
 };
 
 const loadCondition = filePath => {
