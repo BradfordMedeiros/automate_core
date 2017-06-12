@@ -4,3 +4,5 @@
 /db/*
 npm-debug.log
 /data/*
+/public/*
+.idea
