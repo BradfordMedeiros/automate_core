@@ -35,6 +35,7 @@
     "nodemon": "^1.11.0",
     "sendmail": "^1.1.1",
     "wetty": "https://github.com/BradfordMedeiros/wetty.git",
-    "when_do": "^1.0.3"
+    "when_do": "^1.0.3",
+    "automate_system": "https://github.com/BradfordMedeiros/automate_system.git"
   }
 }

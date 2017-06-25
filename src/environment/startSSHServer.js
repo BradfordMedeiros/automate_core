@@ -9,7 +9,7 @@ const startWetty = port => {
       }, 4000);
 
       let hasErrored = false;
-      wetty.startSSH({port: 9001}, {
+      wetty.startSSH({ port }, {
         onServerListen: () => {
           clearTimeout(handle);
           resolve();
