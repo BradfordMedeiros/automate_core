@@ -15,7 +15,6 @@ const create_routes = system => {
 
     const statesArray = Object.keys(systemStates).map(stateName => {
       const hasStateScript = system.engines.stateScriptEngine.getStateScripts()[stateName] !== undefined;
-      console.log('statename: has statescript? : ', stateName, ' : ', hasStateScript);
       return ({
         name: stateName,
         type: hasStateScript ? 'javascript': 'mqtt',
@@ -24,7 +23,6 @@ const create_routes = system => {
                     'no data'),
       })
     });
-
     res.jsonp({
       states: statesArray,
     });
@@ -37,13 +35,10 @@ const create_routes = system => {
         return;
      }
 
-
      const name = path.relative('/modify', req.url);
      const stateEval = req.body.stateEval;
 
-
      if (system.engines.stateScriptEngine.getStateScripts()[name]){
-       console.log('deleting state script');
        system.engines.stateScriptEngine.deleteStateScript(name).then(() => {
          system.engines.stateScriptEngine.addStateScript(name, name, stateEval ? stateEval : '');
        }).catch(() => {
@@ -53,14 +48,11 @@ const create_routes = system => {
      }else{
        system.engines.stateScriptEngine.addStateScript(name, name, stateEval ? stateEval : '');
      }
-
     res.status(200).send('ok');
   });
 
   router.delete('/*', (req, res) => {
-
     const name = path.relative('/', req.url);
-    console.log('state to delete:  ', name);
 
     if (system.engines.stateScriptEngine.getStateScripts()[name]){
       system.engines.stateScriptEngine.deleteStateScript(name).then(() => {

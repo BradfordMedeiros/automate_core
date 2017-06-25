@@ -31,12 +31,8 @@ const create_routes = virtual_system => {
       res.jsonp(json);
 
     }).catch((err) => {
-      console.log('rejecteddd');
-      console.log(err);
       throw(err)
     });
-
-
   });
 
   router.post('/:action_name', (req, res) => {
@@ -88,7 +84,7 @@ const create_routes = virtual_system => {
   });
 
   router.post('/special/speech_recognition', (req, res) => {
-    const THRESHOLD = 0.6;
+    /*const THRESHOLD = 0.6;
 
     if (virtual_system.get_virtual_system().actions.length === 0){
       res.jsonp({ response: 'no actions to perform'}).status(500);
@@ -127,7 +123,8 @@ const create_routes = virtual_system => {
       res.jsonp({ executed: true, action: action.get_name(), confidence: maxValue.max });
       return;
     }
-    res.jsonp({ executed: false, action: action.get_name(), confidence: maxValue.max });
+    res.jsonp({ executed: false, action: action.get_name(), confidence: maxValue.max }); */
+    res.status(500).jsonp({ error: 'not yet implemented' });
   });
 
   return router;
