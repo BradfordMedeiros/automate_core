@@ -1,5 +1,6 @@
 
 const express = require('express');
+const path = require('path');
 
 const create_routes = system => {
   if (system === undefined){
@@ -29,47 +30,45 @@ const create_routes = system => {
     });
   });
 
-  router.post('/modify/:state_name', (req, res) => {
+  router.post('/modify/*', (req, res) => {
+
      if (req.body === undefined){
         res.status(400).jsonp({ error: 'invalid parameters' });
         return;
      }
 
-     const name = req.params.state_name;
+
+     const name = path.relative('/modify', req.url);
      const stateEval = req.body.stateEval;
+
+
      if (system.engines.stateScriptEngine.getStateScripts()[name]){
-        res.status(500).jsonp({ error: `statescript ${name} already exists`})
-       return;
-     }
-
-     if (stateEval === undefined){
-       system.engines.stateScriptEngine.addStateScript(`states/${name}`, `states/${name}`, '');
+       console.log('deleting state script');
+       system.engines.stateScriptEngine.deleteStateScript(name).then(() => {
+         system.engines.stateScriptEngine.addStateScript(name, name, stateEval ? stateEval : '');
+       }).catch(() => {
+         res.status(500).jsonp({ error: 'internal server error' })
+         return;
+       });
      }else{
-       system.engines.stateScriptEngine.addStateScript(`states/${name}`, `states/${name}`, stateEval);
+       system.engines.stateScriptEngine.addStateScript(name, name, stateEval ? stateEval : '');
      }
 
-     res.status(200).send('ok');
+    res.status(200).send('ok');
   });
 
-  router.delete('/:state_name', (req, res) => {
-    const states = virtual_system.get_virtual_system()
-      .states.filter(state => state.get_name() === req.params.state_name);
-    if (states.length === 0){
-      res.status(404).jsonp({ error: "state not found" });
-      return;
-    }
-    else if (states.length > 1){
-      res.status(500).jsonp({ error: 'internal server error'});
-      return;
-    }
+  router.delete('/*', (req, res) => {
 
-    const state = states[0];
-    virtual_system.delete_state(state.get_name()).then(() => {
+    const name = path.relative('/', req.url);
+    console.log('state to delete:  ', name);
+
+    if (system.engines.stateScriptEngine.getStateScripts()[name]){
+      system.engines.stateScriptEngine.deleteStateScript(name).then(() => {
+        res.status(200).send('ok');
+      }).catch(res.status(500).jsonp({ error: 'internal server error' }));
+    }else{
       res.status(200).send('ok');
-    }).catch(() => {
-      console.log('error while deleting state');
-      res.status(500).send({ error: 'internal server error' });
-    });
+    }
   });
 
   return router;
