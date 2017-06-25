@@ -9,12 +9,9 @@ const create_topic_routes = require('./routes/topics');
 const create_core_info = require('./routes/core_info');
 const create_static_routes = require('./routes/static_routes');
 
-const create_routes = (virtual_system, mongoDb) => {
-  if (virtual_system === undefined) {
-    throw (new Error('virtual system undefined in call to create routes'));
-  }
-  if (mongoDb === undefined){
-    throw (new Error(' mongoDb undefined in call to create routes'));
+const create_routes = system => {
+  if (system === undefined){
+    throw (new Error('http:create_routes: system must be defined'));
   }
 
   const router = express();
@@ -31,17 +28,13 @@ const create_routes = (virtual_system, mongoDb) => {
   });
 
   router.use(create_static_routes());
-  router.use('/states', create_state_routes(virtual_system));
-  router.use('/actions', create_action_routes(virtual_system));
-  router.use('/conditions', create_condition_routes(virtual_system));
-  router.use('/sequences', create_sequences_routes(virtual_system));
-  router.use('/events', create_event_routes(mongoDb));
-  router.use('/topics', create_topic_routes(mongoDb));
+  router.use('/states', create_state_routes(system));
+  //router.use('/actions', create_action_routes(virtual_system));
+  //router.use('/conditions', create_condition_routes(virtual_system));
+  //router.use('/sequences', create_sequences_routes(virtual_system));
+  router.use('/events', create_event_routes(system));
+  //router.use('/topics', create_topic_routes(mongoDb));
   router.use('/info', create_core_info());
-
-  router.post('/reload', (req,res) => {
-    virtual_system.load_virtual_system('./mock').then(() => res.send('ok')).catch(() => res.error());
-  });
 
   router.get('/status', (req, res) => {
     res.jsonp({ status: 'ok' });

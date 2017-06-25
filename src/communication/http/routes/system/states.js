@@ -1,39 +1,31 @@
+
 const express = require('express');
-const fs = require('fs');
 
-const readFilePromise = filePath => new Promise((resolve, reject) => {
-  fs.readFile(filePath, (err, value) => {
-    if (err){
-      reject(err);
-    }else{
-      resolve(value.toString())
-    }
-  })
-});
+const create_routes = system => {
+  if (system === undefined){
+    throw (new Error('http:create_routes:states system must be defined'));
+  }
 
-
-const create_routes = virtual_system => {
   const router = express();
 
-
   router.get('/', (req, res) => {
-    const systemStates = virtual_system.get_virtual_system().states;
 
-    const fileReadContentPromise  = Promise.all(systemStates.map(state => readFilePromise(state.path)));
-    fileReadContentPromise.then(fileContent => {
-      const states = systemStates.map((state, index) => ({
-        name: state.get_name(),
-        type: state.get_type(),
-        content: fileContent[index],
-      }));
-      const json = {
-        states,
-      };
-      res.jsonp(json);
+    const systemStates = system.baseSystem.states.getStates();
 
-    }).catch((err) => {
-      console.log(err);
-      throw(err)
+    const statesArray = Object.keys(systemStates).map(stateName => {
+      const hasStateScript = system.engines.stateScriptEngine.getStateScripts()[stateName] !== undefined;
+      console.log('statename: has statescript? : ', stateName, ' : ', hasStateScript);
+      return ({
+        name: stateName,
+        type: hasStateScript ? 'javascript': 'mqtt',
+        content: (hasStateScript?
+                    system.engines.stateScriptEngine.getStateScripts()[stateName].evalString:
+                    'no data'),
+      })
+    });
+
+    res.jsonp({
+      states: statesArray,
     });
   });
 
@@ -45,7 +37,17 @@ const create_routes = virtual_system => {
 
      const name = req.params.state_name;
      const stateEval = req.body.stateEval;
-     virtual_system.add_state(name, `(${stateEval})()`);
+     if (system.engines.stateScriptEngine.getStateScripts()[name]){
+        res.status(500).jsonp({ error: `statescript ${name} already exists`})
+       return;
+     }
+
+     if (stateEval === undefined){
+       system.engines.stateScriptEngine.addStateScript(`states/${name}`, `states/${name}`, '');
+     }else{
+       system.engines.stateScriptEngine.addStateScript(`states/${name}`, `states/${name}`, stateEval);
+     }
+
      res.status(200).send('ok');
   });
 

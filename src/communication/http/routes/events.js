@@ -1,37 +1,15 @@
 
 const express = require('express');
 
-const create_routes = mongoDb => {
+const create_routes = system => {
+  if (system === undefined){
+    throw (new Error('http:create_routes:events system must be defined'));
+  }
+
   const router = express();
 
-  router.get('/topics/:topic/:limit', (req,res) => {
-    const limit = Number(req.params.limit);
-    const topic = req.params.topic;
-    mongoDb.collection('topics').find({ topic }).sort({ _id: -1 }).limit(limit).toArray().then(val => res.jsonp(val)).catch(() => res.status(500));
-  });
-
-  router.get('/topics/:topic_or_limit', (req, res) => {
-    const param = req.params.topic_or_limit;
-    if (Number.isNaN((Number(param)))){
-      mongoDb.collection('topics').find({ topic : param }).sort({ _id : -1 }).limit(10).toArray().then(val => res.send(val)).catch(() => res.status(500));
-    }else{
-      mongoDb.collection('topics').find({ }).sort({ _id: -1 }).limit(Number(param)).toArray().then(val => res.jsonp(val)).catch(() => res.status(500));
-    }
-  });
-
-  router.get('/topics', (req, res) => {
-    const query = req.body.query;
-    const options = req.body.options;
-    mongoDb.collection('topics').find(query, options).toArray().then(val => res.jsonp(val)).catch(() => res.status(500));
-  });
-
   router.get('/', (req, res) => {
-    mongoDb.collection('events').find().sort({ _id: -1 }).toArray().then(val => res.jsonp(val)).catch(() => res.status(500));
-  });
-
-  router.get('/:limit', (req, res) => {
-    const limit = Number(req.params.limit);
-    mongoDb.collection('events').find().limit(limit).sort({ _id: -1 }).toArray().then(val => res.jsonp(val)).catch(() => res.status(500));
+    system.logging.events.getEvents().then(events => res.jsonp(events)).catch(() => res.status(500));
   });
 
   return router;
