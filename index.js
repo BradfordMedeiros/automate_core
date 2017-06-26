@@ -2,6 +2,7 @@
 const automate_system = require('automate_system');
 const create_routes = require('./src/communication/http/rest');
 const startSSHServer = require('./src/environment/startSSHServer');
+const sendEmail = require('./src/util/email/sendEmail');
 
 const PORT = 9000;
 
@@ -19,7 +20,7 @@ automate_system.init({
     port: 4001,
   },
   onEvent: ({ eventName, message }) => {
-    console.log('event name: ', eventName);
+    sendEmail('bradmedeiros0@gmail.com', message);
   } ,
 }).then(system => {
   const router = create_routes(system);
