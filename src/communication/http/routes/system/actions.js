@@ -1,130 +1,84 @@
-const natural = require('natural');
 const express = require('express');
-const fs = require('fs');
+const path = require('path');
 
-const readFilePromise = filePath => new Promise((resolve, reject) => {
-  fs.readFile(filePath, (err, value) => {
-    if (err){
-      reject(err);
-    }else{
-      resolve(value.toString())
-    }
-  })
-});
+const createActionScriptContent = (system, name, topic, script, toTopic) => {
+  const actionScript = system.engines.actionScriptEngine.getActionScripts()[name];
+  if (actionScript === undefined){
+    return system.engines.actionScriptEngine.addActionScript(name, topic, script, toTopic);
+  }else{
+    console.log('tur');
+    return new Promise((resolve, reject) => {
+      system.engines.actionScriptEngine.deleteActionScript(name).then(() => {
+        system.engines.actionScriptEngine.addActionScript(name, topic, script, toTopic).then(resolve).catch(reject);
+      }).catch(reject);
+    });
+  }
+};
 
-const create_routes = virtual_system => {
+const create_routes = system => {
+  if (system === undefined){
+    throw (new Error('http:create_routes:states system must be defined'));
+  }
+
+
   const router = express();
-
   router.get('/', (req, res) => {
+    const systemActions = system.baseSystem.actions.getActions();
 
-    const systemActions = virtual_system.get_virtual_system().actions;
-    const fileReadContentPromise  = Promise.all(systemActions.map(action => readFilePromise(action.path)));
-    fileReadContentPromise.then(fileContent => {
-      const actions = systemActions.map((action, index) => ({
-        name: action.get_name(),
-        type: action.get_type(),
-        content: fileContent[index],
-      }));
-      const json = {
-        actions,
-      };
-      res.jsonp(json);
+    const actionsArray = Object.keys(systemActions).map(actionName => {
+      const hasActionScript = system.engines.actionScriptEngine.getActionScripts()[actionName] !== undefined;
 
-    }).catch((err) => {
-      throw(err)
+      return ({
+        name: actionName,
+        type: hasActionScript ? 'javascript' : 'mqtt',
+        content: (hasActionScript ?
+          'test':
+          'no data')
+      })
+    });
+    res.jsonp({
+      actions: actionsArray,
     });
   });
 
-  router.post('/:action_name', (req, res) => {
-    const actions = virtual_system.get_virtual_system()
-      .actions
-      .filter(action => action.get_name() === req.params.action_name);
-
-    if (actions.length === 0) {
-      res.status(404).jsonp({error: "action not found"});
-      return;
-    }
-    else if (actions.length === 0) {
-      res.status(500).jsonp({error: 'internal server error'});
+  router.post('/modify/*', (req, res) => {
+    if (req.body === undefined){
+      res.status(400).jsonp({ error: 'invalid parameters' });
       return;
     }
 
-    const action = actions[0];
-    action.execute().then(result => res.jsonp(result)).catch(() => res.status(500));
-  });
-
-  router.delete('/:action_name', (req, res) => {
-    const actions = virtual_system.get_virtual_system()
-      .actions.filter(action=> action.get_name() === req.params.action_name);
-    if (actions.length === 0){
-      res.status(404).jsonp({ error: "aciton not found" });
-      return;
-    }
-    else if (actions.length > 1){
-      res.status(500).jsonp({ error: 'internal server error'});
-      return;
-    }
-    virtual_system.delete_action(actions[0].get_name()).then(() => {
-      res.status(200).send('ok');
-    }).catch(() => {
-      res.status(500).send({ error: 'internal server error' });
-    });
-  });
-
-  router.post('/modify/:action_name', (req, res) => {
-    if (req.body === undefined) {
-      res.status(400).jsonp({error: 'invalid parameters'});
-      return;
-    }
-
-    const name = req.params.action_name;
+    const name = path.relative('/modify', req.url);
     const actionEval = req.body.actionEval;
-    virtual_system.add_action(name, `(${actionEval})()`);
-    res.status(200).send('ok');
+
+    if (system.baseSystem.actions.getActions()[name] === undefined){
+      system.baseSystem.actions.forceAddAction(path.relative('actions', name)).then(() => {
+        createActionScriptContent(system, name, name, actionEval || '', `action_scripts/${name}`).then(() => {
+          res.status(200).send('ok');
+        }).catch(() => {
+          res.status(500).jsonp({ error: '1internal server error' })
+        })
+      }).catch(() => {
+        res.status(500).jsonp({ error: '2internal server error' })
+      });
+    }else{
+      createActionScriptContent(system, name, name, actionEval || '', `action_scripts/${name}`).then(() => {
+        res.status(200).send('ok');
+      }).catch(() => {
+        res.status(500).jsonp({ error: '3internal server error' })
+      })
+    }
   });
 
-  router.post('/special/speech_recognition', (req, res) => {
-    /*const THRESHOLD = 0.6;
+  router.delete('/*', (req, res) => {
+    const name = path.relative('/', req.url);
 
-    if (virtual_system.get_virtual_system().actions.length === 0){
-      res.jsonp({ response: 'no actions to perform'}).status(500);
-      return;
+    if (system.engines.actionScriptEngine.getActionScripts()[name]){
+      system.engines.actionScriptEngine.deleteActionScript(name).then(() => {
+        res.status(200).send('ok');
+      }).catch(res.status(500).jsonp({ error: 'internal server error' }));
+    }else{
+      res.status(200).send('ok');
     }
-    const action_to_perform = req.body.speech;
-    if (action_to_perform === undefined){
-      res.jsonp({ response: 'invalid parameters' }).status(500);
-      return;
-    }
-
-    const distances = virtual_system
-      .get_virtual_system()
-      .actions
-      .map(action =>
-        natural.JaroWinklerDistance(
-          action.get_name(),
-          action_to_perform
-        )
-      );
-    const maxValue = distances.reduce(
-      (currentMax, currentVal, currentIndex) => {
-        if (currentVal > currentMax.max) {
-          return {
-            max: currentVal,
-            index: currentIndex,
-          }
-        } else {
-          return currentMax;
-        }
-      }, {max: distances[0], index: 0});
-
-    const action =  virtual_system.get_virtual_system().actions[maxValue.index];
-    if (maxValue.max > THRESHOLD) {
-      action.execute();
-      res.jsonp({ executed: true, action: action.get_name(), confidence: maxValue.max });
-      return;
-    }
-    res.jsonp({ executed: false, action: action.get_name(), confidence: maxValue.max }); */
-    res.status(500).jsonp({ error: 'not yet implemented' });
   });
 
   return router;

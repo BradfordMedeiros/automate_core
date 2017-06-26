@@ -29,7 +29,6 @@ const create_routes = system => {
   });
 
   router.post('/modify/*', (req, res) => {
-
      if (req.body === undefined){
         res.status(400).jsonp({ error: 'invalid parameters' });
         return;
