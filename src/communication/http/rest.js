@@ -30,8 +30,8 @@ const create_routes = system => {
   router.use(create_static_routes());
   router.use('/states', create_state_routes(system));
   router.use('/actions', create_action_routes(system));
-  router.use('/conditions', create_condition_routes(system));
-  //router.use('/sequences', create_sequences_routes(system));
+  //router.use('/conditions', create_condition_routes(system));
+  router.use('/sequences', create_sequences_routes(system));
   router.use('/events', create_event_routes(system));
   //router.use('/topics', create_topic_routes(mongoDb));
   router.use('/info', create_core_info());

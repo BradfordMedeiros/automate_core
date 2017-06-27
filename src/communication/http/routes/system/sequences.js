@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 
 const create_routes = system => {
   if (system === undefined){
@@ -43,35 +44,40 @@ const create_routes = system => {
     sequence.execute().then(result => res.jsonp(result)).catch(() => res.status(500));*/
   });
 
-  router.post('/modify/:sequence_name', (req, res) => {
-    /*if (req.body === undefined){
-      res.status(400).jsonp({ error: 'invalid parameters' });
-      return;
-    }
+  router.post('/modify/*', (req, res) => {
+    const sequenceName = path.relative('/modify/sequences/', req.url);
 
-    const name = req.params.sequence_name;
-    const actions = req.body.actions;
-    virtual_system.add_sequence(name, actions || []);
-    res.status(200).send('ok');*/
+    const sequenceActions = req.body.actions;
+
+    if (system.engines.sequenceEngine.getSequences()[sequenceName]){
+      system.engines.sequenceEngine.deleteSequence(sequenceName).then(() => {
+        system.engines.sequenceEngine.addSequence(sequenceName, []).then(() => {
+          res.status(200).send('ok');
+        }).catch(() => {
+          res.status(400).jsonp({ error: 'internal server error' });
+        })
+      }).catch(() => {
+        res.status(400).jsonp({ error: 'internal server error' });
+      });
+    }else {
+      system.engines.sequenceEngine.addSequence(sequenceName, []).then(() => {
+        res.status(200).send('ok');
+      }).catch(() => {
+        res.status(400).jsonp({ error: 'internal server error' });
+      });
+    }
   });
 
-  router.delete('/:sequence_name', (req, res) => {
-    /*const sequences = virtual_system.get_virtual_system()
-      .sequences.filter(sequence => sequence.get_name() === req.params.sequence_name);
-    if (sequences.length === 0){
-      res.status(404).jsonp({ error: "sequence not found" });
-      return;
-    }
-    else if (sequences.length > 1){
-      res.status(500).jsonp({ error: 'internal server error'});
-      return;
-    }
+  router.delete('/*', (req, res) => {
+    const sequenceName = path.relative('/sequences/', req.url);
 
-    virtual_system.delete_sequence(sequences[0].get_name()).then(() => {
+    console.log('url is: ', req.url);
+    console.log('will delete: ', sequenceName);
+    system.engines.sequenceEngine.deleteSequence(sequenceName).then(() => {
       res.status(200).send('ok');
     }).catch(() => {
-      res.status(500).send({ error: 'internal server error' });
-    });*/
+      res.status(400).jsonp({ error: 'internal server error' });
+    });
   });
 
   return router;
