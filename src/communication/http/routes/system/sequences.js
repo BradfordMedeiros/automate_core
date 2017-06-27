@@ -14,8 +14,8 @@ const create_routes = system => {
     const sequenceObjects = Object.keys(sequences).map(sequenceName => ({
       name: sequenceName,
       actions: system.engines.sequenceEngine.getSequences()[sequenceName].sequenceParts.map(x => ({
-        name: x.type,
-        value: x.options,
+        type: x.type,
+        options: x.options,
       })),
     }));
 
@@ -32,16 +32,19 @@ const create_routes = system => {
     const sequenceActions = req.body.actions;
     if (system.engines.sequenceEngine.getSequences()[sequenceName]){
       system.engines.sequenceEngine.deleteSequence(sequenceName).then(() => {
-        system.engines.sequenceEngine.addSequence(sequenceName, []).then(() => {
+        console.log('deleted');
+        system.engines.sequenceEngine.addSequence(sequenceName, sequenceActions || []).then(() => {
+          console.log('added');
           res.status(200).send('ok');
         }).catch(() => {
+          console.log('valid sequence');
           res.status(400).jsonp({ error: 'internal server error' });
         })
       }).catch(() => {
         res.status(400).jsonp({ error: 'internal server error' });
       });
     }else {
-      system.engines.sequenceEngine.addSequence(sequenceName, []).then(() => {
+      system.engines.sequenceEngine.addSequence(sequenceName, sequenceActions || [] ).then(() => {
         res.status(200).send('ok');
       }).catch(() => {
         res.status(400).jsonp({ error: 'internal server error' });
