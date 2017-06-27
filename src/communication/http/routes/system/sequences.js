@@ -1,22 +1,32 @@
 const express = require('express');
 
-const create_routes = virtual_system => {
+const create_routes = system => {
+  if (system === undefined){
+    throw (new Error('http:create_routes:sequences system must be defined'));
+  }
+
   const router = express();
 
   router.get('/', (req, res) => {
-    const sequences = virtual_system.get_virtual_system().sequences.map(sequence => ({
-      name: sequence.get_name(),
-      actions: sequence.actions,
+    s = system;
+    const sequences = system.engines.sequenceEngine.getSequences();
+    const sequenceObjects = Object.keys(sequences).map(sequenceName => ({
+      name: sequenceName,
+      actions: system.engines.sequenceEngine.getSequences()[sequenceName].sequenceParts.map(x => ({
+        name: x.type,
+        value: x.options,
+      })),
     }));
 
     const json = {
-      sequences,
+      sequences: sequenceObjects
     };
+
     res.jsonp(json);
   });
 
   router.post('/:sequence_name', (req, res) => {
-    const sequences = virtual_system.get_virtual_system()
+    /*const sequences = virtual_system.get_virtual_system()
       .sequences
       .filter(sequence => sequence.get_name() === req.params.sequence_name);
 
@@ -30,11 +40,11 @@ const create_routes = virtual_system => {
     }
 
     const sequence = sequences[0];
-    sequence.execute().then(result => res.jsonp(result)).catch(() => res.status(500));
+    sequence.execute().then(result => res.jsonp(result)).catch(() => res.status(500));*/
   });
 
   router.post('/modify/:sequence_name', (req, res) => {
-    if (req.body === undefined){
+    /*if (req.body === undefined){
       res.status(400).jsonp({ error: 'invalid parameters' });
       return;
     }
@@ -42,11 +52,11 @@ const create_routes = virtual_system => {
     const name = req.params.sequence_name;
     const actions = req.body.actions;
     virtual_system.add_sequence(name, actions || []);
-    res.status(200).send('ok');
+    res.status(200).send('ok');*/
   });
 
   router.delete('/:sequence_name', (req, res) => {
-    const sequences = virtual_system.get_virtual_system()
+    /*const sequences = virtual_system.get_virtual_system()
       .sequences.filter(sequence => sequence.get_name() === req.params.sequence_name);
     if (sequences.length === 0){
       res.status(404).jsonp({ error: "sequence not found" });
@@ -61,7 +71,7 @@ const create_routes = virtual_system => {
       res.status(200).send('ok');
     }).catch(() => {
       res.status(500).send({ error: 'internal server error' });
-    });
+    });*/
   });
 
   return router;

@@ -2,11 +2,15 @@ const express = require('express');
 const fse = require('fs-extra');
 const path = require('path');
 
-const create_routes = virtual_system => {
+const create_routes = system => {
+  if (system === undefined){
+    throw (new Error('http:create_routes:conditions system must be defined'));
+  }
+
   const router = express();
 
   router.get('/', (req, res) => {
-    const conditions = virtual_system.get_virtual_system().conditions.map(condition => ({
+    /*const conditions = virtual_system.get_virtual_system().conditions.map(condition => ({
       name: condition.get_name(),
       state: condition.get_state(),
       file: JSON.parse(fse.readFileSync(condition.path)),
@@ -14,11 +18,11 @@ const create_routes = virtual_system => {
     const json = {
       conditions,
     };
-    res.jsonp(json);
+    res.jsonp(json);*/
   });
 
   router.get('/:condition_name', (req, res) => {
-    const conditions = virtual_system.get_virtual_system()
+    /*const conditions = virtual_system.get_virtual_system()
       .conditions
       .filter(condition => condition.get_name() === req.params.condition_name);
 
@@ -32,11 +36,11 @@ const create_routes = virtual_system => {
     }
 
     const json = JSON.parse(fse.readFileSync(conditions[0].path, 'utf-8'));
-    res.jsonp(json);
+    res.jsonp(json);*/
   });
 
   router.post('/:condition_name/', (req, res) => {
-    if (req.body === undefined){
+    /*if (req.body === undefined){
       res.status(400).jsonp({ error: 'invalid parameters' });
       return;
     }
@@ -44,11 +48,11 @@ const create_routes = virtual_system => {
     const name = req.params.condition_name;
     const parameters = req.body;
     virtual_system.add_condition(name, parameters);
-    res.status(200).send('ok');
+    res.status(200).send('ok');*/
   });
 
   router.delete('/:condition_name', (req, res) => {
-    const conditions = virtual_system.get_virtual_system()
+    /*const conditions = virtual_system.get_virtual_system()
       .conditions.filter(condition => condition.get_name() === req.params.condition_name);
     if (conditions.length === 0){
       res.status(404).jsonp({ error: "condition not found" });
@@ -65,6 +69,7 @@ const create_routes = virtual_system => {
     }).catch(() => {
       res.status(500).send({ error: 'internal server error' });
     });
+    */
   });
 
   return router;
