@@ -32,8 +32,9 @@ const create_routes = system => {
         name: actionName,
         type: hasActionScript ? 'javascript' : 'mqtt',
         content: (hasActionScript ?
-          'test':
-          'no data')
+            system.engines.actionScriptEngine.getActionScripts()[actionName].script :
+            ''
+          )
       })
     });
     res.jsonp({
