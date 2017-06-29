@@ -10,8 +10,6 @@ const create_routes = system => {
   const router = express();
 
   router.get('/', (req, res) => {
-
-    s = system;
     const systemConditions = system.baseSystem.conditions.getConditions();
 
     const conditionsArray = Object.keys(systemConditions).map(conditionName => {
@@ -27,7 +25,6 @@ const create_routes = system => {
   });
 
   router.post('/modify/*', (req, res) => {
-
     if (req.body === undefined){
       res.status(400).jsonp({ error: 'invalid parameters' });
       return;
@@ -36,8 +33,6 @@ const create_routes = system => {
     const name = path.relative('/modify/conditions/', req.url);
     const conditionEval = req.body.conditionEval;
 
-    console.log('new condition name is: ', name);
-    console.log('condition eval is: ', conditionEval);
     if (system.baseSystem.conditions.getConditions()[name]){
       system.baseSystem.conditions.deleteCondition(name).then(() => {
         system.baseSystem.conditions.addCondition(name, conditionEval ? conditionEval : 'return false').then(() => {
