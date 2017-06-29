@@ -1,5 +1,5 @@
+
 const express = require('express');
-const fse = require('fs-extra');
 const path = require('path');
 
 const create_routes = system => {
@@ -10,66 +10,64 @@ const create_routes = system => {
   const router = express();
 
   router.get('/', (req, res) => {
-    /*const conditions = virtual_system.get_virtual_system().conditions.map(condition => ({
-      name: condition.get_name(),
-      state: condition.get_state(),
-      file: JSON.parse(fse.readFileSync(condition.path)),
-    }));
-    const json = {
-      conditions,
-    };
-    res.jsonp(json);*/
+
+    s = system;
+    const systemConditions = system.baseSystem.conditions.getConditions();
+
+    const conditionsArray = Object.keys(systemConditions).map(conditionName => {
+      return ({
+        name: conditionName,
+        type: 'javascript',
+        content: systemConditions[conditionName].evalString,
+      })
+    });
+    res.jsonp({
+      conditions: conditionsArray,
+    });
   });
 
-  router.get('/:condition_name', (req, res) => {
-    /*const conditions = virtual_system.get_virtual_system()
-      .conditions
-      .filter(condition => condition.get_name() === req.params.condition_name);
+  router.post('/modify/*', (req, res) => {
 
-    if (conditions.length === 0){
-      res.status(404).jsonp({ error: "condition not found" });
-      return;
-    }
-    else if (conditions.length === 0){
-      res.status(500).jsonp({ error: 'internal server error'});
-      return;
-    }
-
-    const json = JSON.parse(fse.readFileSync(conditions[0].path, 'utf-8'));
-    res.jsonp(json);*/
-  });
-
-  router.post('/:condition_name/', (req, res) => {
-    /*if (req.body === undefined){
+    if (req.body === undefined){
       res.status(400).jsonp({ error: 'invalid parameters' });
       return;
     }
 
-    const name = req.params.condition_name;
-    const parameters = req.body;
-    virtual_system.add_condition(name, parameters);
-    res.status(200).send('ok');*/
+    const name = path.relative('/modify/conditions/', req.url);
+    const conditionEval = req.body.conditionEval;
+
+    console.log('new condition name is: ', name);
+    console.log('condition eval is: ', conditionEval);
+    if (system.baseSystem.conditions.getConditions()[name]){
+      system.baseSystem.conditions.deleteCondition(name).then(() => {
+        system.baseSystem.conditions.addCondition(name, conditionEval ? conditionEval : 'return false').then(() => {
+          res.status(200).send('ok');
+        }).catch(() => {
+          res.status(500).jsonp({ error: 'internal server error' })
+        });
+      }).catch(() => {
+        res.status(500).jsonp({ error: 'internal server error' })
+      });
+    }else{
+      system.baseSystem.conditions.addCondition(name, conditionEval ? conditionEval : 'return false').then(() => {
+        res.status(200).send('ok');
+      }).catch(() => {
+        res.status(500).jsonp({ error: 'internal server error' })
+      });
+    }
   });
 
-  router.delete('/:condition_name', (req, res) => {
-    /*const conditions = virtual_system.get_virtual_system()
-      .conditions.filter(condition => condition.get_name() === req.params.condition_name);
-    if (conditions.length === 0){
-      res.status(404).jsonp({ error: "condition not found" });
-      return;
-    }
-    else if (conditions.length > 1){
-      res.status(500).jsonp({ error: 'internal server error'});
-      return;
-    }
+  router.delete('/*', (req, res) => {
+    const name = path.relative('/', req.url);
 
-    const condition = conditions[0];
-    virtual_system.delete_condition(condition.get_name()).then(() => {
+    if (system.baseSystem.conditions.getConditions()[name]){
+      system.baseSystem.conditions.deleteCondition(name).then(() => {
+        res.status(200).send('ok');
+      }).catch(() => res.status(500).jsonp({ error: 'internal server error' }));
+    }
+    else{
       res.status(200).send('ok');
-    }).catch(() => {
-      res.status(500).send({ error: 'internal server error' });
-    });
-    */
+    }
   });
 
   return router;
