@@ -4,6 +4,7 @@ const create_state_routes = require('./routes/system/states');
 const create_action_routes = require('./routes/system/actions');
 const create_condition_routes = require('./routes/system/conditions');
 const create_sequences_routes =  require('./routes/system/sequences');
+const create_schedule_routes = require('./routes/system/schedules');
 const create_event_routes = require('./routes/events');
 const create_topic_routes = require('./routes/topics');
 const create_core_info = require('./routes/core_info');
@@ -31,6 +32,7 @@ const create_routes = system => {
   router.use('/states', create_state_routes(system));
   router.use('/actions', create_action_routes(system));
   router.use('/conditions', create_condition_routes(system));
+  router.use('/schedules', create_schedule_routes(system));
   router.use('/sequences', create_sequences_routes(system));
   router.use('/events', create_event_routes(system));
   //router.use('/topics', create_topic_routes(mongoDb));

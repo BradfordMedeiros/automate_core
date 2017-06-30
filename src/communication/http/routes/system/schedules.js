@@ -3,23 +3,24 @@ const path = require('path');
 
 const create_routes = system => {
   if (system === undefined){
-    throw (new Error('http:create_routes:conditions system must be defined'));
+    throw (new Error('http:create_routes:schedules system must be defined'));
   }
 
   const router = express();
 
   router.get('/', (req, res) => {
-    const systemConditions = system.baseSystem.conditions.getConditions();
+    s = system;
+    const systemSchedules = system.engines.schedulerEngine.getSchedules();
 
-    const conditionsArray = Object.keys(systemConditions).map(conditionName => {
+    const schedulesArray = Object.keys(systemSchedules).map(scheduleName => {
       return ({
-        name: conditionName,
+        name: scheduleName,
         type: 'javascript',
-        content: systemConditions[conditionName].evalString,
+        content: systemSchedules[scheduleName].schedule,
       })
     });
     res.jsonp({
-      conditions: conditionsArray,
+      schedules: schedulesArray,
     });
   });
 
