@@ -30,7 +30,7 @@ const create_routes = system => {
       return;
     }
 
-    const name = path.relative('/modify/conditions/', req.url);
+    const name = path.relative('/modify/schedules/', req.url);
     const conditionEval = req.body.conditionEval;
 
     if (system.baseSystem.conditions.getConditions()[name]){
@@ -55,8 +55,8 @@ const create_routes = system => {
   router.delete('/*', (req, res) => {
     const name = path.relative('/', req.url);
 
-    if (system.baseSystem.conditions.getConditions()[name]){
-      system.baseSystem.conditions.deleteCondition(name).then(() => {
+    if (system.engines.schedulerEngine.getSchedules()[name]){
+      system.engines.schedulerEngine.deleteSchedule(name).then(() => {
         res.status(200).send('ok');
       }).catch(() => res.status(500).jsonp({ error: 'internal server error' }));
     }
