@@ -31,11 +31,15 @@ const create_routes = system => {
     }
 
     const name = path.relative('/modify/schedules/', req.url);
-    const conditionEval = req.body.conditionEval;
 
-    if (system.baseSystem.conditions.getConditions()[name]){
-      system.baseSystem.conditions.deleteCondition(name).then(() => {
-        system.baseSystem.conditions.addCondition(name, conditionEval ? conditionEval : 'return false').then(() => {
+    console.log('schedule to add is: ', name);
+    const schedule = req.body.schedule || '* * * * *';
+    const scheduleTopic = `/schedules/${name}`;
+    const scheduleValue = 'default value';
+
+    if (system.engines.schedulerEngine.getSchedules()[name]){
+      system.engines.schedulerEngine.deleteSchedule(name).then(() => {
+        system.engines.schedulerEngine.addSchedule(name, schedule, scheduleTopic, scheduleValue).then(() => {
           res.status(200).send('ok');
         }).catch(() => {
           res.status(500).jsonp({ error: 'internal server error' })
@@ -44,7 +48,7 @@ const create_routes = system => {
         res.status(500).jsonp({ error: 'internal server error' })
       });
     }else{
-      system.baseSystem.conditions.addCondition(name, conditionEval ? conditionEval : 'return false').then(() => {
+      system.engines.schedulerEngine.addSchedule(name, schedule, scheduleTopic, scheduleValue).then(() => {
         res.status(200).send('ok');
       }).catch(() => {
         res.status(500).jsonp({ error: 'internal server error' })
