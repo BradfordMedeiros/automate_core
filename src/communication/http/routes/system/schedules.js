@@ -34,8 +34,8 @@ const create_routes = system => {
 
     console.log('schedule to add is: ', name);
     const schedule = req.body.schedule || '* * * * *';
-    const scheduleTopic = `/schedules/${name}`;
-    const scheduleValue = 'default value';
+    const scheduleTopic = req.body.topic  || '';
+    const scheduleValue = req.body.value || '';
 
     if (system.engines.schedulerEngine.getSchedules()[name]){
       system.engines.schedulerEngine.deleteSchedule(name).then(() => {
