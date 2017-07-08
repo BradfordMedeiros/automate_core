@@ -17,6 +17,8 @@ const create_routes = system => {
         name: scheduleName,
         type: 'javascript',
         content: systemSchedules[scheduleName].schedule,
+        topic: systemSchedules[scheduleName].topic,
+        value: systemSchedules[scheduleName].value,
       })
     });
     res.jsonp({
