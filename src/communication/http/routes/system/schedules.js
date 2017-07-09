@@ -35,7 +35,7 @@ const create_routes = system => {
     const name = path.relative('/modify/schedules/', req.url);
 
     console.log('schedule to add is: ', name);
-    const schedule = req.body.schedule || '* * * * *';
+    const schedule = req.body.schedule || '* * * * * *';
     const scheduleTopic = req.body.topic  || '';
     const scheduleValue = req.body.value || '';
 
