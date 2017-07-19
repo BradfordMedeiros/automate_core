@@ -9,7 +9,6 @@ const create_routes = system => {
   const router = express();
 
   router.get('/', (req, res) => {
-    s = system;
     const systemSchedules = system.engines.schedulerEngine.getSchedules();
 
     const schedulesArray = Object.keys(systemSchedules).map(scheduleName => {
