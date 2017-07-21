@@ -1,30 +1,39 @@
 
 const express = require('express');
 
-const create_routes = mongoDb => {
+const create_routes = system => {
+  if (system === undefined){
+    throw (new Error('http:create_routes:topics system must be defined'));
+  }
+
   const router = express();
 
   router.get('/:topic/:limit', (req,res) => {
     const limit = Number(req.params.limit);
     const topic = req.params.topic;
-    mongoDb.collection('topics').find({ topic }).sort({ _id: -1 }).limit(limit).toArray().then(val => res.jsonp(val)).catch(() => res.status(500));
+    system.logging.history.getHistory({ topic, limit }).then(result => {
+      res.status(200).jsonp(result);
+    }).catch(err => {
+      res.status(500).jsonp({ error: 'internal server error' });
+    });
   });
 
   router.get('/:topic_or_limit', (req, res) => {
     const param = req.params.topic_or_limit;
     if (Number.isNaN((Number(param)))){
-      mongoDb.collection('topics').find({ topic : param }).sort({ _id : -1 }).limit(10).toArray().then(val => res.send(val)).catch(() => res.status(500));
+      system.logging.history.getHistory({ topic: param  }).then(result => {
+        res.status(200).jsonp(result);
+      }).catch(err => {
+        res.status(500).jsonp({ error: 'internal server error' });
+      });
     }else{
-      mongoDb.collection('topics').find({ }).sort({ _id: -1 }).limit(Number(param)).toArray().then(val => res.jsonp(val)).catch(() => res.status(500));
+      system.logging.history.getHistory({ limit: param }).then(result => {
+        res.status(200).jsonp(result);
+      }).catch(err => {
+        res.status(500).jsonp({ error: 'internal server error' });
+      });
     }
   });
-
-  router.post('/', (req, res) => {
-    const query = req.body.query;
-    const options = req.body.options;
-    mongoDb.collection('topics').find(query, options).toArray().then(val => res.jsonp(val)).catch(() => res.status(500));
-  });
-
 
   return router;
 };

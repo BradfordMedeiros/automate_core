@@ -37,7 +37,7 @@ const create_routes = system => {
   router.use('/schedules', create_schedule_routes(system));
   router.use('/rules', create_rules_routes(system));
   router.use('/events', create_event_routes(system));
-  //router.use('/topics', create_topic_routes(mongoDb));
+  router.use('/topics', create_topic_routes(system));
   router.use('/info', create_core_info());
 
   router.get('/status', (req, res) => {
