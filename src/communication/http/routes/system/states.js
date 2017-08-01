@@ -55,9 +55,11 @@ const create_routes = system => {
 
     if (system.engines.stateScriptEngine.getStateScripts()[name]){
       system.engines.stateScriptEngine.deleteStateScript(name).then(() => {
+        system.baseSystem.states.unregister(name);
         res.status(200).send('ok');
       }).catch(res.status(500).jsonp({ error: 'internal server error' }));
     }else{
+      system.baseSystem.states.unregister(name);
       res.status(200).send('ok');
     }
   });
