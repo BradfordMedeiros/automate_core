@@ -9,7 +9,6 @@ const getDatabasesWithActive = () => new Promise((resolve, reject) => {
     databaseManager.getActiveDatabase()
   ]);
   dbPromise.then(values => {
-    console.log('got here');
     const databases = values[0].map(dbName => ({
       name: dbName,
       isActive: dbName === values[1],
@@ -35,6 +34,9 @@ const create_routes = () => {
   });
 
   router.get('/:database_name/download', (req, res) => {
+    const database_name = req.params.database_name;
+    const dbPath = databaseManager.getDatabasePath(database_name);
+    res.sendFile(dbPath);
 
   });
 
@@ -43,7 +45,12 @@ const create_routes = () => {
   });
 
   router.delete('/:database_name', (req,res) => {
-
+    const database_name = req.params.database_name;
+    databaseManager.deleteDatabase(database_name).then(() => {
+      res.status(200).send('ok');
+    }).catch(err => {
+      res.jsonp({ error: err });
+    });
   });
 
   router.post('/:database_name/upload', (req,res) => {

@@ -13,6 +13,9 @@ const isIllegalName = databaseName => {
   );
 };
 
+
+const getDatabasePath = databaseName =>  path.resolve(`./databases/dbs/${databaseName}`);
+
 const getDatabases = () => new Promise((resolve, reject) => {
   if (databases === undefined){
     fs.readdir('./databases/dbs', (err, dbs) => {
@@ -55,7 +58,7 @@ const deleteDatabase = databaseName => (
       reject('cannot delete the active database');
     }
     else{
-      const dbPath = path.resolve(`./databases/dbs/${databaseName}`);
+      const dbPath = getDatabasePath(databaseName);
       getDatabases().then(dbs => {
         const dbIndex = dbs.indexOf(databaseName);
         if (dbIndex >= 0){
@@ -112,8 +115,6 @@ const createDatabase = databaseName => (
   })
 );
 
-
-
 const copyDatabase = (oldDatabaseName, newDatabaseName) => (
   new Promise((resolve, reject) => {
     if (isIllegalName(oldDatabaseName) ||  isIllegalName(newDatabaseName)){
@@ -122,7 +123,9 @@ const copyDatabase = (oldDatabaseName, newDatabaseName) => (
       throw (new Error('not yet implementd'));
     }
   })
-)
+);
+
+
 
 module.exports = {
   getActiveDatabase,
@@ -130,4 +133,5 @@ module.exports = {
   createDatabase,
   deleteDatabase,
   getDatabases,
+  getDatabasePath,
 };
