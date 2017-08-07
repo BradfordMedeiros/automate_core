@@ -1,14 +1,18 @@
 const express = require("express");
 const bodyParser = require('body-parser');
+
 const create_state_routes = require('./routes/system/states');
 const create_action_routes = require('./routes/system/actions');
 const create_condition_routes = require('./routes/system/conditions');
+
 const create_sequences_routes =  require('./routes/system/sequences');
 const create_schedule_routes = require('./routes/system/schedules');
 const create_rules_routes = require('./routes/system/rules');
+
 const create_event_routes = require('./routes/events');
 const create_topic_routes = require('./routes/topics');
 const create_core_info = require('./routes/core_info');
+const create_database_routes = require('./routes/databases');
 const create_static_routes = require('./routes/static_routes');
 
 const create_routes = system => {
@@ -39,6 +43,7 @@ const create_routes = system => {
   router.use('/events', create_event_routes(system));
   router.use('/topics', create_topic_routes(system));
   router.use('/info', create_core_info());
+  router.use('/databases', create_database_routes());
 
   router.get('/status', (req, res) => {
     res.jsonp({ status: 'ok' });

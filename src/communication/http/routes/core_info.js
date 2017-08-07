@@ -8,7 +8,7 @@ const create_routes = () => {
   router.get('/', (req, res) => {
     getNetworkInfo(5000).then(info => {
       const deviceInfo = info;
-      deviceInfo.automate_core_version = '0.2';
+      deviceInfo.automate_core_version = '0.3';
       res.jsonp(deviceInfo);
     }).catch(err => {
       res.status(500).jsonp({ error: 'network failure'});
