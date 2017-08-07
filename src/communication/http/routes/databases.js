@@ -37,7 +37,6 @@ const create_routes = () => {
     const database_name = req.params.database_name;
     const dbPath = databaseManager.getDatabasePath(database_name);
     res.sendFile(dbPath);
-
   });
 
   router.post('/:database_name/copy', (req,res) => {
