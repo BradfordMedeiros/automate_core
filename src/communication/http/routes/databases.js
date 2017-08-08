@@ -33,7 +33,7 @@ const create_routes = () => {
 
   });
 
-  router.get('/:database_name/download', (req, res) => {
+  router.get('/download/:database_name', (req, res) => {
     const database_name = req.params.database_name;
     const dbPath = databaseManager.getDatabasePath(database_name);
     res.sendFile(dbPath);
