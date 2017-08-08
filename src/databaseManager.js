@@ -131,6 +131,7 @@ module.exports = {
   getActiveDatabase,
   setActiveDatabase,
   createDatabase,
+  copyDatabase,
   deleteDatabase,
   getDatabases,
   getDatabasePath,
