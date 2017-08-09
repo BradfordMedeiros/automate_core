@@ -50,8 +50,17 @@ const create_routes = () => {
     })
   });
 
-  router.post('/:database_name/copy', (req,res) => {
-
+  router.post('/copy/:database_name', (req,res) => {
+    const target_database_name  = req.params.database_name;
+    console.log(req.body);
+    const database_name_to_copy = req.body.from;
+    console.log('target db: ', target_database_name);
+    console.log('to copy: ', database_name_to_copy);
+    databaseManager.copyDatabase(database_name_to_copy, target_database_name).then(() =>{
+      res.status(200).send('ok');
+    }).catch(err => {
+      res.status(400).jsonp({ error: err });
+    });
   });
 
   router.delete('/:database_name', (req,res) => {
@@ -73,21 +82,17 @@ const create_routes = () => {
 
     form.parse(req, (err, fields, files) => {
       if (err){
-        console.log('oh no error');
         res.status(400).jsonp({ error: 'internal server error' });
       }else{
-        console.log('sup sall good');
         const fileName = Object.keys(files)[0];
         const oldpath = files[fileName].path;
         const newpath = path.resolve(`./databases/dbs/${database_name}`);
-
-        console.log('old path: ', oldpath);
-        console.log('new path: ', newpath);
 
         fs.rename(oldpath, newpath, function (err) {
           if (err){
             res.status(400).jsonp({ error: 'internal server error' });
           }else{
+            databaseManager.addDatabase(database_name);
             res.send('ok');
           }
         });

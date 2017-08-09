@@ -93,7 +93,7 @@ const createDatabase = databaseName => (
           if (databaseName.indexOf('/') > -1 || databaseName.indexOf('..') > -1){
             reject('illegal db name');
           }else{
-            const dbPath = path.resolve(`./databases/dbs/${databaseName}`);
+            const dbPath = getDatabasePath(databaseName);
             fs.open(dbPath, "wx", function (err, fd) {
               if (err){
                 reject(err);
@@ -120,14 +120,37 @@ const copyDatabase = (oldDatabaseName, newDatabaseName) => (
     if (isIllegalName(oldDatabaseName) ||  isIllegalName(newDatabaseName)){
       reject('illegal db name');
     }else{
-      throw (new Error('not yet implementd'));
+      const dbPath = getDatabasePath(oldDatabaseName);
+      const newPath = getDatabasePath(newDatabaseName);
+      getDatabases().then(databases => {
+        if (databases.indexOf(oldDatabaseName) < 0){
+          reject('database to copy does not exist');
+        }
+        else if(databases.indexOf(newDatabaseName) > -1) {
+          reject('database already exists');
+        }else{
+          const readStream = fs.createReadStream(dbPath)
+          const writeStream = fs.createWriteStream(newPath);
+          readStream.on('error', reject);
+          writeStream.on('error', reject);
+          const pipedStream = readStream.pipe(writeStream);
+          pipedStream.on('error', reject);
+          pipedStream.on('finish', () => {
+            databases.push(newDatabaseName);
+            resolve();
+          });
+        }
+      }).catch(reject);
     }
   })
 );
 
-
+const addDatabase = databaseName => {
+  databases.push(databaseName);
+};
 
 module.exports = {
+  addDatabase,
   getActiveDatabase,
   setActiveDatabase,
   createDatabase,
