@@ -15,9 +15,12 @@ const create_core_info = require('./routes/core_info');
 const create_database_routes = require('./routes/databases');
 const create_static_routes = require('./routes/static_routes');
 
-const create_routes = system => {
+const create_routes = (system, databaseManager) => {
   if (system === undefined){
     throw (new Error('http:create_routes: system must be defined'));
+  }
+  if (databaseManager === undefined){
+    throw (new Error('http:create_routes: databaseManager must be defined'));
   }
 
   const router = express();
@@ -43,7 +46,7 @@ const create_routes = system => {
   router.use('/events', create_event_routes(system));
   router.use('/topics', create_topic_routes(system));
   router.use('/info', create_core_info());
-  router.use('/databases', create_database_routes());
+  router.use('/databases', create_database_routes(databaseManager));
 
   router.get('/status', (req, res) => {
     res.jsonp({ status: 'ok' });

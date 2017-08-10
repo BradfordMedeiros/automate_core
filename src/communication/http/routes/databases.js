@@ -4,9 +4,8 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const formidable = require('formidable');
-const databaseManager = require('../../../databaseManager');
 
-const getDatabasesWithActive = () => new Promise((resolve, reject) => {
+const getDatabasesWithActive = databaseManager => new Promise((resolve, reject) => {
   const dbPromise = Promise.all([
     databaseManager.getDatabases(),
     databaseManager.getActiveDatabase()
@@ -20,20 +19,28 @@ const getDatabasesWithActive = () => new Promise((resolve, reject) => {
   }).catch(reject);
 });
 
+const create_routes = databaseManager => {
+  if(databaseManager === undefined){
+    throw (new Error('http:create_routes:databases databaseManager must be defined'));
+  }
 
-const create_routes = () => {
   const router = express();
 
   router.get('/', (req, res) => {
-      getDatabasesWithActive().then(databases => {
+      getDatabasesWithActive(databaseManager).then(databases => {
         res.status(200).jsonp({ databases });
       }).catch(err => {
         res.status(400).jsonp({ error: err });
       })
   });
 
-  router.post('/:databasename/set_as_active', (req,res) => {
-
+  router.post('/set_as_active/:database_name', (req,res) => {
+    const database_name = req.params.database_name;
+    databaseManager.setActiveDatabase(database_name).then(() => {
+      res.status(200).send('ok');
+    }).catch(err => {
+      res.status(400).jsonp({ error: err });
+    });
   });
 
   router.get('/download/:database_name', (req, res) => {

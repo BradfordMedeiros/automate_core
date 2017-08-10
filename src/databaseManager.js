@@ -15,6 +15,7 @@ const isIllegalName = databaseName => {
 
 
 const getDatabasePath = databaseName =>  path.resolve(`./databases/dbs/${databaseName}`);
+const getActiveDatabasePath = () => path.resolve('./databases/active_db');
 
 const getDatabases = () => new Promise((resolve, reject) => {
   if (databases === undefined){
@@ -47,7 +48,23 @@ const getActiveDatabase = () => new Promise((resolve, reject) => {
 });
 
 const setActiveDatabase = databaseName => {
-  throw (new Error('not yet implemented'));;
+  return new Promise((resolve, reject) => {
+    getDatabases().then(databases => {
+      if (databases.indexOf(databaseName) < 0){
+        reject('database does not exist')
+      }else{
+        fs.writeFile(getActiveDatabasePath(), databaseName, err =>  {
+          if (err){
+            reject(err);
+          }else{
+            active_db = databaseName;
+            resolve();
+          }
+        });
+      }
+    }).catch(reject);
+  });
+
 };
 
 const deleteDatabase = databaseName => (
@@ -81,7 +98,7 @@ const deleteDatabase = databaseName => (
   })
 );
 
-const createDatabase = databaseName => (
+const createDatabase = (databaseName, migrateDatabase) => (
   new Promise((resolve, reject) => {
     if (isIllegalName(databaseName)){
       reject('illegal db name')
@@ -94,20 +111,10 @@ const createDatabase = databaseName => (
             reject('illegal db name');
           }else{
             const dbPath = getDatabasePath(databaseName);
-            fs.open(dbPath, "wx", function (err, fd) {
-              if (err){
-                reject(err);
-              }else{
-                fs.close(fd, function (err) {
-                  if(err){
-                    reject(err);
-                  }else{
-                    databases.push(databaseName);
-                    resolve();
-                  }
-                });
-              }
-            });
+            migrateDatabase(dbPath).then(() => {
+              databases.push(databaseName);
+              resolve();
+            }).catch(reject);
           }
         }
       }).catch(reject);
@@ -149,13 +156,15 @@ const addDatabase = databaseName => {
   databases.push(databaseName);
 };
 
-module.exports = {
+const getDatabaseManager = (migrateDatabase) => ({
   addDatabase,
   getActiveDatabase,
   setActiveDatabase,
-  createDatabase,
+  createDatabase: databaseName => createDatabase(databaseName, migrateDatabase),
   copyDatabase,
   deleteDatabase,
   getDatabases,
   getDatabasePath,
-};
+});
+
+module.exports = getDatabaseManager;
