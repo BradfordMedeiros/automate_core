@@ -29,11 +29,8 @@
     "body-parser": "^1.17.0",
     "express": "^4.15.0",
     "formidable": "^1.1.1",
-    "mosca": "^2.5.1",
-    "mqtt": "^2.4.0",
     "network": "^0.3.2",
     "sendmail": "^1.1.1",
-    "wetty": "https://github.com/BradfordMedeiros/wetty.git",
-    "when_do": "^1.0.3"
+    "wetty": "https://github.com/BradfordMedeiros/wetty.git"
   }
 }
