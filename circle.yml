@@ -4,7 +4,7 @@ machine:
 
 dependencies:
   pre:
-    - sudo add-apt-repository ppa:chris-lea/zeromq
+    - sudo add-apt-repository ppa:chris-lea/zeromq -y
     - sudo apt-get update
     - sudo apt-get install libzmq3-dbg libzmq3-dev libzmq3
 
