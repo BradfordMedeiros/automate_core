@@ -1,6 +1,13 @@
 machine:
   node:
     version: 7.10.0
+
+dependencies:
+  pre:
+    - sudo add-apt-repository ppa:chris-lea/zeromq
+    - sudo apt-get update
+    - sudo apt-get install libzmq3-dbg libzmq3-dev libzmq3
+
 compile:
   override:
     - npm run build
