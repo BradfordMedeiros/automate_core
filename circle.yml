@@ -10,5 +10,6 @@ dependencies:
 
 compile:
   override:
+    - cp $CIRCLE_ARTIFACTS/automate_ui.tar.gz public/
     - npm run build
     - cp automate_core.tar.gz $CIRCLE_ARTIFACTS
