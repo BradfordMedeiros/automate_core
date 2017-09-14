@@ -22,11 +22,11 @@ jobs:
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
 
-      - run: 
-	  name: test	
-	  command: echo "hello"
+      - pre:
+	  - sudo add-apt-repository ppa:chris-lea/zeromq -y
+   	  - sudo apt-get update
+    	  - sudo apt-get install libzmq3-dbg libzmq3-dev libzmq3
       - run: yarn install 
-
       - save_cache:
           paths:
             - node_modules
