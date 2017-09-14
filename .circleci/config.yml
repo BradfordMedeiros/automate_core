@@ -1,60 +1,15 @@
-version: 2
-jobs:
-  build:
-    docker:
-      # specify the version you desire here
-      - image: circleci/node:7.10
-      
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/mongo:3.4.4
+machine:
+  node:
+    version: 7.10.0
 
-    working_directory: ~/repo
+dependencies:
+  pre:
+    - sudo add-apt-repository ppa:chris-lea/zeromq -y
+    - sudo apt-get update
+    - sudo apt-get install libzmq3-dbg libzmq3-dev libzmq3
 
-    steps:
-      - checkout
-
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-          - v1-dependencies-{{ checksum "package.json" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
-
-     
-      - run: sudo apt-get install software-properties-common python-software-properties
-      - run: sudo add-apt-repository ppa:chris-lea/zeromq -y
-      - run: sudo apt-get update
-      - run:  sudo apt-get install libzmq3-dbg libzmq3-dev libzmq3
-      - run: yarn install 
-      - run: yarn build
-      - run: cp automate_core.tar.gz /tmp/artifacts
-
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
-        
-      # run tests!
-      #- run: yarn test
-
-      - store_artifacts:
-          path: /tmp/artifacts
-
-
-#machine:
-#  node:
-#    version: 7.10.0
-
-#dependencies:
-#  pre:
-#    - sudo add-apt-repository ppa:chris-lea/zeromq -y
-#    - sudo apt-get update
-#    - sudo apt-get install libzmq3-dbg libzmq3-dev libzmq3
-
-#compile:
-#  override:
-#    - cp /tmp/automate_ui.tar.gz public/
-#    - npm run build
-#    - cp automate_core.tar.gz $CIRCLE_ARTIFACTS
+compile:
+  override:
+    - cp /tmp/automate_ui.tar.gz public/
+    - npm run build
+    - cp automate_core.tar.gz $CIRCLE_ARTIFACTS
