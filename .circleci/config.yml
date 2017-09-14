@@ -23,6 +23,7 @@ jobs:
           - v1-dependencies-
 
      
+      - run: sudo apt-get install software-properties-common python-software-properties
       - run: sudo add-apt-repository ppa:chris-lea/zeromq -y
       - run: sudo apt-get update
       - run:  sudo apt-get install libzmq3-dbg libzmq3-dev libzmq3
