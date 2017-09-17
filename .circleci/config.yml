@@ -39,6 +39,7 @@ jobs:
           - v1-dependencies-
 
       - run: yarn run build
+      - run: ls /tmp/artifacts
       - run:  cp automate_core.tar.gz /tmp/artifacts
       #- run: yarn install && yarn build && mkdir -p /tmp/artifacts && cp automate_ui.tar.gz /tmp/artifacts
 
