@@ -38,11 +38,11 @@ jobs:
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
 
+      - run: cd ./circleci/ && ./get_ui_dependencies.sh && cd  ..
       - run: yarn run build
       - run: mkdir -p /tmp/artifacts
       - run: curl https://circleci.com/api/v1.1/me 
       - run:  cp automate_core.tar.gz /tmp/artifacts
-      #- run: yarn install && yarn build && mkdir -p /tmp/artifacts && cp automate_ui.tar.gz /tmp/artifacts
 
       - save_cache:
           paths:
