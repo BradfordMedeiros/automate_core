@@ -1,13 +1,10 @@
 
 const automate_system = require('automate_system');
 const create_routes = require('./src/communication/http/rest');
-const startSSHServer = require('./src/environment/startSSHServer');
 const sendEmail = require('./src/util/email/sendEmail');
 const getDatabaseManager = require ('./src/databaseManager');
 
 const PORT = 9000;
-
-startSSHServer(9001);
 
 const databaseManager = getDatabaseManager(automate_system.migrateDatabase);
 
