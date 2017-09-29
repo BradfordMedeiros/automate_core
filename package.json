@@ -8,7 +8,7 @@
     "example": "examples"
   },
   "scripts": {
-    "start": "node index.js",
+    "start": "./node index.js",
     "start-dev": "NODE_ENV=development nodemon index.js --watch src --exec",
     "build": "mkdir -p databases/dbs && npm install --production && result=${PWD##*/} && cd .. && tar -czvf automate_core.tar.gz $result && mv automate_core.tar.gz ./$result"
   },
