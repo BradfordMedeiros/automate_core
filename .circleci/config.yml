@@ -24,7 +24,7 @@ jobs:
 
       - run: cd ./.circleci/ && ./get_ui_dependencies.sh && cd  ..
       - run: yarn install
-      #- run: cp $(which node) .
+      - run: cp $(which node) .
       - run: yarn run build
       - run: mkdir -p /tmp/artifacts
       - run:  cp automate_core.tar.gz /tmp/artifacts
