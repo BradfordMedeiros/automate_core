@@ -23,6 +23,7 @@ jobs:
           - v1-dependencies-
 
       - run: cd ./.circleci/ && ./get_ui_dependencies.sh && cd  ..
+      - run: yarn install
       - run: cp $(which node) .
       - run: yarn run build
       - run: mkdir -p /tmp/artifacts
