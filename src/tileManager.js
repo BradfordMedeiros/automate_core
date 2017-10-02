@@ -5,7 +5,7 @@ const path = require('path');
 const isDirectory = source => fs.lstatSync(source).isDirectory()
 const getDirectories = source => fs.readdirSync(source).map(name => path.join(source, name)).filter(isDirectory)
 
-const mainTileDirectory = path.resolve('../public/tiles');
+const mainTileDirectory = path.resolve(__dirname, '../public/tiles');
 const getTileDirectory = tileName => path.resolve(mainTileDirectory, tileName);
 
 const getTileInformation = tileFolderPath => ({

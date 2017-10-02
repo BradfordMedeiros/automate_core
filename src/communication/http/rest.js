@@ -13,14 +13,18 @@ const create_event_routes = require('./routes/events');
 const create_topic_routes = require('./routes/topics');
 const create_core_info = require('./routes/core_info');
 const create_database_routes = require('./routes/databases');
+const create_tile_routes =  require('./routes/tiles');
 const create_static_routes = require('./routes/static_routes');
 
-const create_routes = (system, databaseManager) => {
+const create_routes = (system, databaseManager, tileManager) => {
   if (system === undefined){
     throw (new Error('http:create_routes: system must be defined'));
   }
   if (databaseManager === undefined){
     throw (new Error('http:create_routes: databaseManager must be defined'));
+  }
+  if (tileManager === undefined){
+    throw (new Error('http:create_routes: tileManager must be defined'));
   }
 
   const router = express();
@@ -47,6 +51,7 @@ const create_routes = (system, databaseManager) => {
   router.use('/topics', create_topic_routes(system));
   router.use('/info', create_core_info());
   router.use('/databases', create_database_routes(databaseManager));
+  router.use('/tiles', create_tile_routes(tileManager));
 
   router.get('/status', (req, res) => {
     res.jsonp({ status: 'ok' });
