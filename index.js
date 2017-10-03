@@ -3,6 +3,7 @@ const automate_system = require('automate_system');
 const create_routes = require('./src/communication/http/rest');
 const sendEmail = require('./src/util/email/sendEmail');
 const getDatabaseManager = require ('./src/databaseManager');
+const tileManager = require('./src/tileManager');
 
 const PORT = 9000;
 
@@ -41,7 +42,7 @@ getInitialDatabase.then(databaseName => {
     } ,
   }).then(system => {
     sys = system;
-    const router = create_routes(system, databaseManager);
+    const router = create_routes(system, databaseManager, tileManager);
     router.listen(PORT, () => console.log("Server start on port " + PORT));
   });
 })
