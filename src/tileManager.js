@@ -10,7 +10,7 @@ const getTileDirectory = tileName => path.resolve(mainTileDirectory, tileName);
 
 const getTileInformation = tileFolderPath => ({
     name: path.basename(tileFolderPath),
-    url: `${tileFolderPath}/index.html`,
+    url: path.relative(path.resolve(__dirname, '../public'),`${tileFolderPath}/index.html`),
   }
 );
 
