@@ -3,6 +3,7 @@ const express = require('express');
 const path = require('path');
 const formidable = require('formidable');
 const fs = require('fs');
+const targz = require('targz');
 
 const create_routes = tileManager  => {
   if (tileManager === undefined){
@@ -18,11 +19,10 @@ const create_routes = tileManager  => {
   });
 
   router.post('/:tilename', (req, res) => {
-    // save a tile
     const tileName = req.params.tilename;
     const form = new formidable.IncomingForm();
 
-    form.uploadDir = path.resolve(`./public/tiles/${tileName}`);
+    form.uploadDir = path.resolve(`./tmp`);
 
     form.parse(req, (err, fields, files) => {
       if (err){
@@ -30,13 +30,14 @@ const create_routes = tileManager  => {
       }else{
         const fileName = Object.keys(files)[0];
         const oldpath = files[fileName].path;
-        const newpath = path.resolve(`./public/tiles/${tileName}/index.html`);
+        const newpath = path.resolve(`./public/tiles/${tileName}`);
 
-        console.log('old path: ', oldpath);
-        console.log('new path: ', newpath);
-
-        fs.rename(oldpath, newpath, (err) => {
+        targz.decompress({
+          src: oldpath,
+          dest: newpath,
+        }, err => {
           if (err){
+            console.log('error decompressing file');
             res.status(400).jsonp({ error: 'internal server error' });
           }else{
             res.send('ok');
