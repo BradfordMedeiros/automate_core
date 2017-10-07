@@ -16,12 +16,6 @@ const getTileInformation = tileFolderPath => ({
 
 const getTiles  =  () => getDirectories(mainTileDirectory).map(getTileInformation);
 
-const addTile = () => {
-  // check if the folder exists
-  // then unzip the folder
-  throw (new Error('not yet implemented'));
-};
-
 const deleteTile = tileName => new Promise((resolve, reject) => {
   const directory = getTileDirectory(tileName);
   fs.remove(directory, err => {
@@ -38,6 +32,5 @@ const deleteTile = tileName => new Promise((resolve, reject) => {
 module.exports = {
   getTiles,
   getTileDirectory,
-  addTile,
   deleteTile,
 };

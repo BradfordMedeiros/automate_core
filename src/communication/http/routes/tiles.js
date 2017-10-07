@@ -68,6 +68,16 @@ const create_routes = tileManager  => {
 
   });
 
+  router.delete('/:tilename', (req, res) => {
+    const tileName =  req.params.tilename;
+    tileManager.deleteTile(tileName).then(() => {
+      res.status(200).send('ok');
+    }).catch(() => {
+      res.status(400).jsonp({ error: 'internal server error' });
+    });
+
+  });
+
   return router;
 };
 
