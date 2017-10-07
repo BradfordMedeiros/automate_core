@@ -47,6 +47,27 @@ const create_routes = tileManager  => {
     });
   });
 
+  router.get('/:tilename', (req, res) => {
+    console.log('downloading file');
+    const tileName =  req.params.tilename;
+    const tileDirectory = tileManager.getTileDirectory(tileName);
+    const tmpDirectory = path.resolve('./tmp/test.tar.gz'); // this is a race condition with the upload
+
+    targz.compress({
+      src: tileDirectory,
+      dest: tmpDirectory,
+    }, (err) => {
+      if (err){
+        console.log('error compressing file');
+        res.status(400).jsonp({ error: 'internal server error' });
+      }else{
+        console.log('sending file ', tmpDirectory);
+        res.sendFile(tmpDirectory);
+      }
+    });
+
+  });
+
   return router;
 };
 

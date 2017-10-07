@@ -10,7 +10,7 @@ const getTileDirectory = tileName => path.resolve(mainTileDirectory, tileName);
 
 const getTileInformation = tileFolderPath => ({
     name: path.basename(tileFolderPath),
-    url: path.relative(path.resolve(__dirname, '../public'),`${tileFolderPath}/index.html`),
+    url: `static/${path.relative(path.resolve(__dirname, '../public'),`${tileFolderPath}/index.html`)}`,
   }
 );
 
@@ -37,6 +37,7 @@ const deleteTile = tileName => new Promise((resolve, reject) => {
 
 module.exports = {
   getTiles,
+  getTileDirectory,
   addTile,
   deleteTile,
 };
