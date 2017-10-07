@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser = require('body-parser');
+const path = require('path');
 
 const create_state_routes = require('./routes/system/states');
 const create_action_routes = require('./routes/system/actions');
@@ -40,7 +41,7 @@ const create_routes = (system, databaseManager, tileManager) => {
     next();
   });
 
-  router.use(create_static_routes());
+  router.get('/', (req, res) => res.sendFile(path.resolve('./public/index.html')));
   router.use('/states', create_state_routes(system));
   router.use('/actions', create_action_routes(system));
   router.use('/conditions', create_condition_routes(system));
@@ -52,6 +53,8 @@ const create_routes = (system, databaseManager, tileManager) => {
   router.use('/info', create_core_info());
   router.use('/databases', create_database_routes(databaseManager));
   router.use('/tiles', create_tile_routes(tileManager));
+  router.use('/static', create_static_routes());
+
 
   router.get('/status', (req, res) => {
     res.jsonp({ status: 'ok' });

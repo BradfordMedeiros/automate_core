@@ -10,17 +10,11 @@ const getTileDirectory = tileName => path.resolve(mainTileDirectory, tileName);
 
 const getTileInformation = tileFolderPath => ({
     name: path.basename(tileFolderPath),
-    url: path.relative(path.resolve(__dirname, '../public'),`${tileFolderPath}/index.html`),
+    url: `static/${path.relative(path.resolve(__dirname, '../public'),`${tileFolderPath}/index.html`)}`,
   }
 );
 
 const getTiles  =  () => getDirectories(mainTileDirectory).map(getTileInformation);
-
-const addTile = () => {
-  // check if the folder exists
-  // then unzip the folder
-  throw (new Error('not yet implemented'));
-};
 
 const deleteTile = tileName => new Promise((resolve, reject) => {
   const directory = getTileDirectory(tileName);
@@ -37,6 +31,6 @@ const deleteTile = tileName => new Promise((resolve, reject) => {
 
 module.exports = {
   getTiles,
-  addTile,
+  getTileDirectory,
   deleteTile,
 };
