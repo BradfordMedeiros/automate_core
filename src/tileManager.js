@@ -11,8 +11,8 @@ const getTileDirectory = tileName => path.resolve(mainTileDirectory, tileName);
 const getTileInformation = tileFolderPath => ({
     name: path.basename(tileFolderPath),
     url: `static/${path.relative(path.resolve(__dirname, '../public'),`${tileFolderPath}/index.html`)}`,
-  }
-);
+    overlay: `static/${path.relative(path.resolve(__dirname, '../public'),`${tileFolderPath}/overlay.html`)}`,
+});
 
 const getTiles  =  () => getDirectories(mainTileDirectory).map(getTileInformation);
 
