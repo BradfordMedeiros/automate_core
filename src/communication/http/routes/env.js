@@ -20,6 +20,12 @@ const create_routes = system => {
     res.send('ok');
   });
 
+  router.delete('/:variable', (req, res) => {
+    const variable = req.params.variable;
+    delete variables[variable];
+    res.send('ok');
+  });
+
   return router;
 };
 
