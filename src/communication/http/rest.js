@@ -16,7 +16,7 @@ const create_core_info = require('./routes/core_info');
 const create_database_routes = require('./routes/databases');
 const create_tile_routes =  require('./routes/tiles');
 const create_static_routes = require('./routes/static_routes');
-const create_env = require('./routes/env');
+const create_env = require('./routes/system/env');
 
 const create_routes = (system, databaseManager, tileManager) => {
   if (system === undefined){
@@ -51,11 +51,11 @@ const create_routes = (system, databaseManager, tileManager) => {
   router.use('/rules', create_rules_routes(system));
   router.use('/events', create_event_routes(system));
   router.use('/topics', create_topic_routes(system));
+  router.use('/env', create_env(system));
   router.use('/info', create_core_info());
   router.use('/databases', create_database_routes(databaseManager));
   router.use('/tiles', create_tile_routes(tileManager));
   router.use('/static', create_static_routes());
-  router.use('/env', create_env());
 
   router.get('/status', (req, res) => {
     res.jsonp({ status: 'ok' });

@@ -56,16 +56,16 @@ const create_routes = system => {
         createActionScriptContent(system, name, name, actionEval || '', `action_scripts/${name}`).then(() => {
           res.status(200).send('ok');
         }).catch(() => {
-          res.status(500).jsonp({ error: '1internal server error' })
+          res.status(500).jsonp({ error: 'internal server error' })
         })
       }).catch(() => {
-        res.status(500).jsonp({ error: '2internal server error' })
+        res.status(500).jsonp({ error: 'internal server error' })
       });
     }else{
       createActionScriptContent(system, name, name, actionEval || '', `action_scripts/${name}`).then(() => {
         res.status(200).send('ok');
       }).catch(() => {
-        res.status(500).jsonp({ error: '3internal server error' })
+        res.status(500).jsonp({ error: 'internal server error' })
       })
     }
   });
