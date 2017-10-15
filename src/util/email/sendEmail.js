@@ -13,13 +13,16 @@ const processTemplate = (template, {event_name, event_message} ) => {
   return template.replace('{event_name}', event_name).replace('{event_message}', event_message);
 };
 
-const send_email = (email_address, message) => {
+const send_email = (email_address, topic, message) => {
+  const event_name = topic;
+  const event_message = message;
+
   return new Promise((resolve, reject) => {
     sendmail({
       from: 'Automate@automate.com',
       to: email_address,
       subject: 'Event- Topic: (topic), message: (message)',
-      html:  processTemplate(template, { event_name: 'Cat Door Opened Mo', event_message: 'SDoor is now open' }),
+      html:  processTemplate(template, { event_name, event_message }),
     }, (err, reply) => {
       if (err) {
         reject(err);

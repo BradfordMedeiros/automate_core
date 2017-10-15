@@ -17,6 +17,7 @@ const create_database_routes = require('./routes/databases');
 const create_tile_routes =  require('./routes/tiles');
 const create_static_routes = require('./routes/static_routes');
 const create_env = require('./routes/system/env');
+const create_email = require('./routes/email');
 
 const create_routes = (system, databaseManager, tileManager) => {
   if (system === undefined){
@@ -56,6 +57,7 @@ const create_routes = (system, databaseManager, tileManager) => {
   router.use('/databases', create_database_routes(databaseManager));
   router.use('/tiles', create_tile_routes(tileManager));
   router.use('/static', create_static_routes());
+  router.use('/email', create_email());
 
   router.get('/status', (req, res) => {
     res.jsonp({ status: 'ok' });

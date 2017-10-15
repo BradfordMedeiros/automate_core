@@ -38,7 +38,7 @@ getInitialDatabase.then(databaseName => {
       port: 4001,
     },
     onEvent: ({ eventName, message }) => {
-      sendEmail('bradmedeiros0@gmail.com', message);
+      sendEmail('bradmedeiros0@gmail.com', eventName, message);
     } ,
   }).then(system => {
     sys = system;
