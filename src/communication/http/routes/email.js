@@ -16,12 +16,6 @@ const create_routes = () => {
     });
   });
 
-  router.post('/:email', (req, res) => {
-    const email = req.params.email;
-    emailAddress = email;
-    res.send('ok');
-  });
-
   router.post('/enable', (req, res) => {
     emailEnabled = true;
     res.send('ok');
@@ -29,6 +23,12 @@ const create_routes = () => {
 
   router.post('/disable', (req, res) => {
     emailEnabled = false;
+    res.send('ok');
+  });
+
+  router.post('/address/:email', (req, res) => {
+    const email = req.params.email;
+    emailAddress = email;
     res.send('ok');
   });
 
