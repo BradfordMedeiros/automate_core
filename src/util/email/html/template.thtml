@@ -24,7 +24,7 @@
             padding-left: 40px;
         ">
             <div style="margin-right: 50px;">Topic: </div>
-            <div>{email_name}</div>
+            <div>{event_name}</div>
         </div>
         <div style="
             display: flex;
@@ -35,7 +35,7 @@
             padding-left: 40px;
         ">
             <div style="margin-right: 50px;">message: </div>
-            <div>{email_message}</div>
+            <div>{event_message}</div>
         </div>
 
         <div style="
