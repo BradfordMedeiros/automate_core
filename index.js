@@ -4,6 +4,7 @@ const create_routes = require('./src/communication/http/rest');
 const sendEmail = require('./src/util/email/sendEmail');
 const getDatabaseManager = require ('./src/databaseManager');
 const tileManager = require('./src/tileManager');
+const emailManager = require('./src/emailManager');
 
 const PORT = 9000;
 
@@ -38,11 +39,19 @@ getInitialDatabase.then(databaseName => {
       port: 4001,
     },
     onEvent: ({ eventName, message }) => {
-      sendEmail('bradmedeiros0@gmail.com', eventName, message);
+      emailManager.getEmailInfo().then(emailInfo => {
+        const emailAddress = emailInfo.emailAddress;
+        const isEnabled = emailInfo.isEnabled;
+        if (isEnabled){
+          sendEmail(emailAddress, eventName, message);
+        }
+      }).catch(() => {
+        console.error('error getting email adddress');
+      });
     } ,
   }).then(system => {
     sys = system;
-    const router = create_routes(system, databaseManager, tileManager);
+    const router = create_routes(system, databaseManager, tileManager, emailManager);
     router.listen(PORT, () => console.log("Server start on port " + PORT));
   });
 })
