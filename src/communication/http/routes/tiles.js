@@ -31,6 +31,7 @@ const create_routes = tileManager  => {
         const fileName = Object.keys(files)[0];
         const oldpath = files[fileName].path;
         const newpath = path.resolve(`./public/tiles/${tileName}`);
+        const tileIndex = `${newpath}/index.html`;
 
         targz.decompress({
           src: oldpath,
@@ -40,7 +41,16 @@ const create_routes = tileManager  => {
             console.log('error decompressing file');
             res.status(400).jsonp({ error: 'internal server error' });
           }else{
-            res.send('ok');
+            console.log('--tileIndex: ', tileIndex);
+            tileManager.injectAllScripts(tileIndex, '127.0.0.1').then(() => {
+              res.send('ok');
+            }).catch(() => {
+              tileManager.deleteTile(tileName).then(() => {
+                res.status(400).jsonp({ error: 'upload tile failure, deleted successfully' });
+              }).catch(() => {
+                res.status(400).jsonp({ error: 'upload tile failure, deleted unsuccessfully' });
+              });
+            });
           }
         });
       }

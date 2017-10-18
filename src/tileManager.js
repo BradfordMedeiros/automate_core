@@ -30,7 +30,7 @@ const deleteTile = tileName => new Promise((resolve, reject) => {
 
 const scripts = {
   common: () => `<!--automate:inject--><script src="../common.js"></script><!--automate:inject-->\n`,
-  env: ipAddress => `<!--automate:inject--><script>window.ip ='${ipAddress}'</script><!--automate:inject-->\n`,
+  env: ipAddress => `<!--automate:inject--><script>window.ip_address ='${ipAddress}'</script><!--automate:inject-->\n`,
 };
 
 const injectScript =  (filePath, scriptName, arg) => new Promise((resolve, reject) => {
