@@ -1,16 +1,21 @@
 
 let isLocked = false;
+let systemName = undefined;
 
-const lockSystem = () => new Promise((resolve, reject) => {
+const lockSystem = sysName => new Promise((resolve, reject) => {
   isLocked = true;
+  systemName = sysName;
   resolve();
 });
 
-const isSystemLocked = () => new Promise((resolve, reject) => {
-  resolve(isLocked);
+const getSystemLockedData = () => new Promise((resolve, reject) => {
+  resolve({
+    isLocked,
+    systemName,
+  });
 });
 
 module.exports = {
   lockSystem,
-  isSystemLocked,
+  getSystemLockedData,
 };

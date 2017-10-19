@@ -8,15 +8,28 @@ const create_routes = lockSystemManager => {
   const router = express();
 
   router.get('/', (req, res) => {
-    lockSystemManager.isSystemLocked().then(isLocked => {
-      res.send(isLocked);
+    lockSystemManager.getSystemLockedData().then(({ isLocked, systemName }) => {
+      res.send({
+        isLocked,
+        systemName,
+      });
     }).catch(() => {
       res.jsonp({ error: 'internal server error' });
     })
   });
 
   router.post('/', (req, res) => {
+    const systemName = req.params.system_name;
     lockSystemManager.lockSystem().then(() => {
+      res.send('ok');
+    }).catch(() => {
+      res.jsonp({ error: 'internal server error' });
+    })
+  });
+
+  router.post('/:system_name', (req, res) => {
+    const systemName = req.params.system_name;
+    lockSystemManager.lockSystem(systemName).then(() => {
       res.send('ok');
     }).catch(() => {
       res.jsonp({ error: 'internal server error' });
