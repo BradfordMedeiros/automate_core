@@ -8,8 +8,8 @@ const create_routes = lockSystemManager => {
   const router = express();
 
   router.get('/', (req, res) => {
-    lockSystemManager.isSystemLocked().then(() => {
-      res.send('ok');
+    lockSystemManager.isSystemLocked().then(isLocked => {
+      res.send(isLocked);
     }).catch(() => {
       res.jsonp({ error: 'internal server error' });
     })

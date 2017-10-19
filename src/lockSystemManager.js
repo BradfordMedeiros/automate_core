@@ -1,12 +1,13 @@
 
-let isSystemLocked = false;
+let isLocked = false;
+
 const lockSystem = () => new Promise((resolve, reject) => {
-  isSystemLocked = true;
+  isLocked = true;
   resolve();
 });
 
-const isSystemLocked = new Promise((resolve, reject) => {
-  resolve(isSystemLocked);
+const isSystemLocked = () => new Promise((resolve, reject) => {
+  resolve(isLocked);
 });
 
 module.exports = {
