@@ -5,6 +5,7 @@ const sendEmail = require('./src/util/email/sendEmail');
 const getDatabaseManager = require ('./src/databaseManager');
 const tileManager = require('./src/tileManager');
 const emailManager = require('./src/emailManager');
+const lockSystemManager = require('./src/lockSystemManager');
 
 const PORT = 9000;
 
@@ -51,7 +52,7 @@ getInitialDatabase.then(databaseName => {
     } ,
   }).then(system => {
     sys = system;
-    const router = create_routes(system, databaseManager, tileManager, emailManager);
+    const router = create_routes({ system, databaseManager, tileManager, emailManager, lockSystemManager });
     router.listen(PORT, () => console.log("Server start on port " + PORT));
   });
 })
