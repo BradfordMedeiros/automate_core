@@ -3,7 +3,7 @@ const automate_system = require('automate_system');
 const create_routes = require('./src/communication/http/rest');
 const sendEmail = require('./src/util/email/sendEmail');
 const getDatabaseManager = require ('./src/databaseManager');
-const tileManager = require('./src/tileManager');
+const tileManager = require('./src/tileManager/tileManager');
 const emailManager = require('./src/emailManager');
 const lockSystemManager = require('./src/lockSystemManager');
 
@@ -49,7 +49,7 @@ getInitialDatabase.then(databaseName => {
       }).catch(() => {
         console.error('error getting email adddress');
       });
-    } ,
+    },
   }).then(system => {
     sys = system;
     const router = create_routes({ system, databaseManager, tileManager, emailManager, lockSystemManager });
