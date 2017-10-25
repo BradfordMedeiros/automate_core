@@ -12,6 +12,11 @@ const create_routes = system => {
     res.jsonp(system.env.getEnv());
   });
 
+  router.get('/:variable', (req, res) => {
+    const variable = req.params.variable;
+    res.send(system.env.getEnv()[variable]);
+  });
+
   router.post('/:variable/:value', (req, res) => {
     const variable = req.params.variable;
     const value = req.params.value;
