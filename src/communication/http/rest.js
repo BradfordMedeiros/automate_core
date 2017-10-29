@@ -2,6 +2,9 @@ const express = require("express");
 const bodyParser = require('body-parser');
 const path = require('path');
 
+const create_auth_middleware = require('./middleware/authentication');
+const create_account_routes = require('./routes/accounts');
+
 const create_state_routes = require('./routes/system/states');
 const create_action_routes = require('./routes/system/actions');
 const create_condition_routes = require('./routes/system/conditions');
@@ -50,6 +53,57 @@ const create_routes = ({ system, databaseManager, tileManager, emailManager, loc
     res.header("Access-Control-Allow-Methods", "GET, POST, DELETE");
     next();
   });
+
+
+  const users = [
+    {
+      username: 'test-user',
+      password: 'test-password',
+    }
+  ];
+
+  const usernameExists = username => {
+    return users.filter(user => user.username === username).length > 0;
+  };
+
+  const accounts = {
+    getUsers: () => {
+      return users.map(user => user.username);
+    },
+    isValidCredentials: (username, password) => {
+      const user = users.filter(user => user.username === username)[0];
+      if (user){
+        return password === user.password;
+      }
+      return false;
+    },
+    createUser: (username, password) => {
+      return new Promise((resolve, reject) => {
+        if (typeof(username) !== typeof('') || typeof(password) !== typeof('')){
+          console.log('username: ', username);
+          console.log('password: ', password);
+          reject('undefined credential pair');
+        }
+        else if (usernameExists(username)){
+          reject('username already exists');
+        }else{
+          users.push({
+            username,
+            password,
+          })
+          resolve();
+        }
+      });
+    },
+  };
+
+  router.use(create_auth_middleware(accounts));
+  router.use('/accounts', create_account_routes(accounts));
+
+  router.post('/test', (req, res) => {
+    r = req;
+    res.send('test yes');
+  })
 
   router.get('/', (req, res) => res.sendFile(path.resolve('./public/index.html')));
   router.use('/states', create_state_routes(system));
