@@ -11,15 +11,15 @@ const create_routes = accounts => {
   router.get('/', (req, res) => {
     res.jsonp(accounts.getUsers());
   });
+
   router.post('/login', (req, res) => {
     if (req.isAuthenticated()){
       res.send('ok');
     }
-    res.status(403).jsonp({ error: 'invalid credentials' });
+    res.status(403);
   });
 
   router.post('/createUser', (req, res) => {
-    r = req;
     accounts.createUser(req.body.username, req.body.password).then(() => {
       res.send('ok');
     }).catch(err => {
@@ -28,8 +28,6 @@ const create_routes = accounts => {
 
     });
   });
-
-
 
   return router;
 };
