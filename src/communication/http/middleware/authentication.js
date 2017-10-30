@@ -12,9 +12,11 @@ const createMiddleware = accounts => {
   const router = express();
 
   router.use((req, res, next) => {
-    req.isAuthenticated = () => {
-      return accounts.isValidCredentials(req.body.username, req.body.password);
-    };
+    req.isAuthenticated = () => new Promise((resolve, reject) => {
+      accounts.isValidCredentials(req.body.username, req.body.password).then(() => {
+        resolve();
+      }).catch(reject);
+    });
     next();
   });
 

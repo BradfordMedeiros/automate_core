@@ -24,7 +24,14 @@ const create_lock_system_routes = require('./routes/lock_system');
 const create_env = require('./routes/system/env');
 const create_email = require('./routes/email');
 
-const create_routes = ({ system, databaseManager, tileManager, emailManager, lockSystemManager }) => {
+const create_routes = ({
+  system,
+  databaseManager,
+  tileManager,
+  emailManager,
+  lockSystemManager,
+  accounts,
+}) => {
   if (system === undefined){
     throw (new Error('http:create_routes: system must be defined'));
   }
@@ -40,6 +47,9 @@ const create_routes = ({ system, databaseManager, tileManager, emailManager, loc
   if (lockSystemManager === undefined){
     throw (new Error('http:create_routes: lockSystemManager must be defined'));
   }
+  if (accounts === undefined){
+    throw (new Error('http:create_routes: accounts must be defined'));
+  }
 
   const router = express();
 
@@ -54,56 +64,8 @@ const create_routes = ({ system, databaseManager, tileManager, emailManager, loc
     next();
   });
 
-
-  const users = [
-    {
-      username: 'test-user',
-      password: 'test-password',
-    }
-  ];
-
-  const usernameExists = username => {
-    return users.filter(user => user.username === username).length > 0;
-  };
-
-  const accounts = {
-    getUsers: () => {
-      return users.map(user => user.username);
-    },
-    isValidCredentials: (username, password) => {
-      const user = users.filter(user => user.username === username)[0];
-      if (user){
-        return password === user.password;
-      }
-      return false;
-    },
-    createUser: (username, password) => {
-      return new Promise((resolve, reject) => {
-        if (typeof(username) !== typeof('') || typeof(password) !== typeof('')){
-          console.log('username: ', username);
-          console.log('password: ', password);
-          reject('undefined credential pair');
-        }
-        else if (usernameExists(username)){
-          reject('username already exists');
-        }else{
-          users.push({
-            username,
-            password,
-          })
-          resolve();
-        }
-      });
-    },
-  };
-
   router.use(create_auth_middleware(accounts));
   router.use('/accounts', create_account_routes(accounts));
-
-  router.post('/test', (req, res) => {
-    r = req;
-    res.send('test yes');
-  })
 
   router.get('/', (req, res) => res.sendFile(path.resolve('./public/index.html')));
   router.use('/states', create_state_routes(system));

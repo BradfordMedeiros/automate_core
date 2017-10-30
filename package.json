@@ -27,11 +27,14 @@
   "dependencies": {
     "automate_system": "https://github.com/BradfordMedeiros/automate_system.git",
     "body-parser": "^1.17.0",
+    "crypto": "^1.0.1",
     "express": "^4.15.0",
     "formidable": "^1.1.1",
     "fs-extra": "^4.0.2",
     "network": "^0.3.2",
     "sendmail": "^1.1.1",
-    "targz": "^1.0.1"
+    "sqlite3": "^3.1.8",
+    "targz": "^1.0.1",
+    "when_do": "^1.0.8"
   }
 }
