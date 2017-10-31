@@ -94,10 +94,24 @@ const getAccounts = db => {
 
   };
 
+  const setUserPic = (username, imageUrl) => {
+    return new Promise((resolve, reject) => {
+      db.open().then(database => {
+        database.all(`update users set imageUrl = '${imageUrl}' where username = '${username}'`, (err) => {
+          if (err){
+            reject(err);
+          }else{
+            resolve();
+          }
+        });
+      }).catch(reject);
+    });
+  };
+
   const getUsers = () => {
     return new Promise((resolve, reject) => {
       db.open().then(database => {
-        database.all(`SELECT username FROM users`, (err, users) => {
+        database.all(`SELECT username, imageURL FROM users`, (err, users) => {
           if (err) {
             reject(err);
           } else {
@@ -113,6 +127,7 @@ const getAccounts = db => {
     deleteUser,
     isValidCredentials,
     getUsers,
+    setUserPic,
   });
 };
 
