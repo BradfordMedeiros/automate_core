@@ -2,6 +2,9 @@ const express = require("express");
 const bodyParser = require('body-parser');
 const path = require('path');
 
+const create_auth_middleware = require('./middleware/authentication');
+const create_account_routes = require('./routes/accounts');
+
 const create_state_routes = require('./routes/system/states');
 const create_action_routes = require('./routes/system/actions');
 const create_condition_routes = require('./routes/system/conditions');
@@ -21,7 +24,14 @@ const create_lock_system_routes = require('./routes/lock_system');
 const create_env = require('./routes/system/env');
 const create_email = require('./routes/email');
 
-const create_routes = ({ system, databaseManager, tileManager, emailManager, lockSystemManager }) => {
+const create_routes = ({
+  system,
+  databaseManager,
+  tileManager,
+  emailManager,
+  lockSystemManager,
+  accounts,
+}) => {
   if (system === undefined){
     throw (new Error('http:create_routes: system must be defined'));
   }
@@ -37,6 +47,9 @@ const create_routes = ({ system, databaseManager, tileManager, emailManager, loc
   if (lockSystemManager === undefined){
     throw (new Error('http:create_routes: lockSystemManager must be defined'));
   }
+  if (accounts === undefined){
+    throw (new Error('http:create_routes: accounts must be defined'));
+  }
 
   const router = express();
 
@@ -50,6 +63,9 @@ const create_routes = ({ system, databaseManager, tileManager, emailManager, loc
     res.header("Access-Control-Allow-Methods", "GET, POST, DELETE");
     next();
   });
+
+  router.use(create_auth_middleware(accounts));
+  router.use('/accounts', create_account_routes(accounts));
 
   router.get('/', (req, res) => res.sendFile(path.resolve('./public/index.html')));
   router.use('/states', create_state_routes(system));
