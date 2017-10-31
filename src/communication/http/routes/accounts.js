@@ -31,7 +31,15 @@ const create_routes = accounts => {
     }).catch(err => {
       console.log(err);
       res.status(400).jsonp({ error: 'internal server error' });
+    });
+  });
 
+  router.post('/setProfileImage', (req, res) => {
+    accounts.setProfileImage(req.body.username, req.body.imageUrl).then(() => {
+      res.send('ok');
+    }).catch(err => {
+      console.log(err);
+      res.status(400).jsonp({ error: 'internal server error' });
     });
   });
 

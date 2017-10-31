@@ -94,7 +94,7 @@ const getAccounts = db => {
 
   };
 
-  const setUserPic = (username, imageUrl) => {
+  const setProfileImage = (username, imageUrl) => {
     return new Promise((resolve, reject) => {
       db.open().then(database => {
         database.all(`update users set imageUrl = '${imageUrl}' where username = '${username}'`, (err) => {
@@ -127,7 +127,7 @@ const getAccounts = db => {
     deleteUser,
     isValidCredentials,
     getUsers,
-    setUserPic,
+    setProfileImage,
   });
 };
 
