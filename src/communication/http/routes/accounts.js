@@ -43,6 +43,27 @@ const create_routes = accounts => {
     });
   });
 
+  router.get('/isAccountCreationAdminOnly', (req, res) => {
+    accounts.isAccountCreationAdminOnly().then(isAdminOnly => {
+      res.jsonp(isAdminOnly);
+    }).catch(err => {
+      console.log(err);
+      res.status(400).jsonp({ error: 'internal server error' });
+    });
+  });
+
+  router.get('/myAccount', (req, res) => {
+    res.jsonp({
+      username: 'brad',
+      email: 'bradmedeiros0@gmail.com',
+      alias: 'cool user',
+      admin: {
+        allowAccountCreation: false,
+        allowEmailReset: true,
+      },
+    });
+  });
+
   return router;
 };
 
