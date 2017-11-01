@@ -1,12 +1,14 @@
 const fs = require('fs');
 const getDatabase = require('../getDatabase');
 const sequencer = require('when_do').sequencer;
-const createAccountsSchema = require('../accounts/createSchema');
+const createAccountsSchema = require('../accounts/users/createSchema');
+const createNonPriviledgfedAccountCreationSchema = require('../accounts/non_priviledged_account_creation/createSchema');
 
 const migrate = db => {
   return new Promise((resolve, reject) => {
     sequencer()
       .hold(() => createAccountsSchema(db))
+      .hold(() => createNonPriviledgfedAccountCreationSchema(db))
       .run()
       .then(resolve)
       .catch(reject);
