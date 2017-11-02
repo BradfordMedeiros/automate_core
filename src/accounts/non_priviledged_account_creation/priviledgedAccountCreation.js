@@ -18,7 +18,6 @@ const getPriviledgedAccountCreation = db => {
               const isEnabled = firstRow.enabled === 1;
               resolve(isEnabled);
             }
-            resolve(isEnabled);
           }
         });
       }).catch(reject);
