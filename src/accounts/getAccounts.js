@@ -15,6 +15,24 @@ const getAccounts = db => {
     createUser: users.createUser,
     deleteUser: users.deleteUser,
     isValidCredentials: users.isValidCredentials,
+    generateToken: (username, password) => {
+      return new Promise((resolve, reject) => {
+        if (typeof(username) !== typeof('') || typeof(password) !== typeof('')){
+          reject('invalid parameters');
+        }else{
+          users.isValidCredentials(username, password).then(() => {
+            resolve('test token');
+          }).catch(() => {
+            reject('invalid token');
+          })
+        }
+      });
+    },
+    getUserForToken: (token) => {
+      return new Promise((resolve, reject) => {
+        resolve('teset');
+      });
+    },
     getUsers: users.getUsers,
     setProfileImage: users.setProfileImage,
     isAccountCreationAdminOnly: priviledgedAccountCreation.isAccountCreationPriviledged,

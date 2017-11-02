@@ -8,6 +8,8 @@ const create_routes = accounts => {
 
   const router = express();
 
+  acc = accounts;
+
   router.get('/', (req, res) => {
     accounts.getUsers().then(users => {
       res.jsonp(users);
@@ -17,9 +19,11 @@ const create_routes = accounts => {
   });
 
   router.post('/login', (req, res) => {
-    req.isAuthenticated().then(() => {
-      res.send('ok');
-    }).catch(() => {
+    accounts.generateToken(req.body.username, req.body.password).then(token => {
+      res.jsonp({
+        token,
+      });
+    }).catch(err => {
       res.status(403).jsonp({ error: 'invalid credentials' });
     });
   });
@@ -71,12 +75,16 @@ const create_routes = accounts => {
 
   // going to need token for this, how to handle?
   router.get('/myAccount', (req, res) => {
+    const allData = Promise.all([
+      accounts.isAccountCreationAdminOnly(),
+      accounts.getUserForToken('test'),
+    ]);
 
-    const allData = Promise.all([accounts.isAccountCreationAdminOnly()]);
     allData.then(data => {
       const allowAccountCreation = data[0] === false;
+      const username = data[1];
       res.jsonp({
-        username: 'brad',
+        username,
         email: 'bradmedeiros0@gmail.com',
         alias: 'cool user',
         isAdmin: true,
