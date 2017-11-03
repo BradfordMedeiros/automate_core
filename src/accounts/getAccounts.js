@@ -28,6 +28,15 @@ const getAccounts = db => {
         }
       });
     },
+    generateTokenFromToken: token => {
+      return new Promise((resolve, reject) => {
+        if (typeof('token') !== typeof('')){
+          reject('invalid parameters');
+        }else{
+          resolve('token from token');
+        }
+      });
+    },
     getUserForToken: (token) => {
       return new Promise((resolve, reject) => {
         resolve('teset');

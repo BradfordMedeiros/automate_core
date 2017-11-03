@@ -28,6 +28,17 @@ const create_routes = accounts => {
     });
   });
 
+  router.post('/loginWithToken', (req, res) => {
+    accounts.generateTokenFromToken(req.body.token).then(token => {
+      res.jsonp({
+        token,
+      });
+    }).catch(err => {
+      console.log(err);
+      res.status(400).jsonp({ error: 'internal server error' });
+    });
+  });
+
   router.post('/createUser', (req, res) => {
     accounts.createUser(req.body.username, req.body.password).then(() => {
       res.send('ok');
