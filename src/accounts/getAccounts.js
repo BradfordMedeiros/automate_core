@@ -1,45 +1,39 @@
 
 
 const getUsers = require('./users/getUsers');
+const getJwt = require('./users/jwt');
 const getNonPriviledgedAccountCreation =  require('./non_priviledged_account_creation/priviledgedAccountCreation');
 
-const getAccounts = db => {
+const getAccounts = (db, secretFileLocation) => {
   if (db === undefined){
     throw (new Error('accounts:getAccounts db not defined'));
   }
+  if (typeof(secretFileLocation) !== typeof('')){
+    throw (new Error('accounts:getAccounts secretFileLocation is not defined'));
+  }
 
-  const users = getUsers(db);
+  const jwt = getJwt(secretFileLocation);
+  const users = getUsers(db, jwt);
   const priviledgedAccountCreation = getNonPriviledgedAccountCreation(db);
 
   return ({
     createUser: users.createUser,
     deleteUser: users.deleteUser,
-    isValidCredentials: users.isValidCredentials,
-    generateToken: (username, password) => {
-      return new Promise((resolve, reject) => {
+    generateToken: (username, password) => new Promise((resolve, reject) => {
         if (typeof(username) !== typeof('') || typeof(password) !== typeof('')){
           reject('invalid parameters');
         }else{
-          users.isValidCredentials(username, password).then(() => {
-            resolve('test token');
+          users.isValidCredentials(username, password).then(token => {
+            resolve(token);
           }).catch(() => {
-            reject('invalid token');
+            reject('could not validate credentials to generate token');
           })
         }
-      });
-    },
-    generateTokenFromToken: token => {
-      return new Promise((resolve, reject) => {
-        if (typeof('token') !== typeof('')){
-          reject('invalid parameters');
-        }else{
-          resolve('token from token');
-        }
-      });
-    },
+    }),
+    generateTokenFromToken: jwt.generateTokenWithToken,
     getUserForToken: (token) => {
       return new Promise((resolve, reject) => {
-        resolve('teset');
+        resolve('this is mock username');
       });
     },
     getUsers: users.getUsers,

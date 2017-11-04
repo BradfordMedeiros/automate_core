@@ -34,7 +34,6 @@ const create_routes = accounts => {
         token,
       });
     }).catch(err => {
-      console.log(err);
       res.status(400).jsonp({ error: 'internal server error' });
     });
   });
@@ -96,8 +95,8 @@ const create_routes = accounts => {
       const username = data[1];
       res.jsonp({
         username,
-        email: 'bradmedeiros0@gmail.com',
-        alias: 'cool user',
+        email: 'this is mocked data@email.com',
+        alias: 'this is mocked, finish accounts routes',
         isAdmin: true,
         admin: {
           allowAccountCreation,

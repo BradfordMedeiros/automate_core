@@ -58,6 +58,10 @@ const create_routes = tileManager  => {
   });
 
   router.get('/:tilename', (req, res) => {
+
+    console.warn('@todo make sure we are removing injected scripts all download');
+    console.warn('@todo looks like we are not removing them...?');
+
     console.log('downloading file');
     const tileName =  req.params.tilename;
     const tileDirectory = tileManager.getTileDirectory(tileName);

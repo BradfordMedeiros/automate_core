@@ -1,8 +1,12 @@
 const crypto = require('crypto');
 
-const getUsers = db => {
+
+const getUsers = (db, jwt) => {
   if (db === undefined){
-    throw (new Error('accounts:users:getPriviledgedAccountCreation db not defined'));
+    throw (new Error('accounts:users:getUsers db not defined'));
+  }
+  if (typeof(jwt) !== typeof({})){
+    throw (new Error('accounts:users:getUsers jwt is not defined'));
   }
 
   const generateSalt = () => crypto.randomBytes(128).toString('base64');
@@ -80,7 +84,7 @@ const getUsers = db => {
               reject(err);
             }else{
               if (users.length === 1){
-                resolve();
+                jwt.generateToken(username).then(resolve).catch(reject);
               }else{
                 reject();
               }

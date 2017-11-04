@@ -1,4 +1,5 @@
 
+const path = require('path');
 const automate_system = require('automate_system');
 const create_routes = require('./src/communication/http/rest');
 const sendEmail = require('./src/util/email/sendEmail');
@@ -9,16 +10,18 @@ const lockSystemManager = require('./src/lockSystemManager');
 const getAccounts = require('./src/accounts/getAccounts');
 const migrate = require('./src/environment/migrate');
 
+const ACCOUNT_SECRET_FILE = path.resolve('./data/account_secret');
+
 const getMigratedAccounts = () => new Promise((resolve, reject) => {
   const getDatabase = require('./src/getDatabase');
   if (migrate.isMigrated('./accounts.db')){
     const database = getDatabase('./accounts.db');
-    const accounts = getAccounts(database);
+    const accounts = getAccounts(database, ACCOUNT_SECRET_FILE);
     resolve(accounts);
   }else{
     migrate.createDb('./accounts.db').then(() => {
       const database = getDatabase('./accounts.db');
-      const accounts = getAccounts(database);
+      const accounts = getAccounts(database, ACCOUNT_SECRET_FILE);
       resolve(accounts);
     }).catch(err => {
       console.log('critical error could not create db');
