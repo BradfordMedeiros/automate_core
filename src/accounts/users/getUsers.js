@@ -1,12 +1,11 @@
+// this file handles storing user accounts, checking passwords, etc
+// this should not do anything with user tokens
+
 const crypto = require('crypto');
 
-
-const getUsers = (db, jwt) => {
+const getUsers = db => {
   if (db === undefined){
     throw (new Error('accounts:users:getUsers db not defined'));
-  }
-  if (typeof(jwt) !== typeof({})){
-    throw (new Error('accounts:users:getUsers jwt is not defined'));
   }
 
   const generateSalt = () => crypto.randomBytes(128).toString('base64');
@@ -84,7 +83,7 @@ const getUsers = (db, jwt) => {
               reject(err);
             }else{
               if (users.length === 1){
-                jwt.generateToken(username).then(resolve).catch(reject);
+                resolve();
               }else{
                 reject();
               }

@@ -1,4 +1,9 @@
 
+// this file represents jwt encoding
+// if does not encrypt the token, but simply produces jwt token (signature only)
+// this also does not ensure anything about the user actually existing as a user account,
+// and this file should not do that (do not read the database directly from this file!)
+
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const fs = require('fs');
@@ -108,7 +113,6 @@ const getJwt = secretFileLocation => {
     getUserForToken: token => getUserForJwtToken(token, secret),
     generateTokenWithToken: token => generateJwtTokenWithToken(token, secret),
   });
-
 };
 
 

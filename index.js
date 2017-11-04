@@ -34,6 +34,7 @@ getMigratedAccounts().then(accounts => {
   const PORT = 9000;
   const databaseManager = getDatabaseManager(automate_system.migrateDatabase);
 
+  // database manager is getting the active database to we can pass that to automate system
   const getInitialDatabase = new Promise((resolve, reject) => {
     databaseManager.getActiveDatabase().then(databaseName => {
       console.log('database name is: ', databaseName);

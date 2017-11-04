@@ -1,4 +1,5 @@
 
+// file determines the interface and combines the logic for  basic user creation +  token verification
 
 const getUsers = require('./users/getUsers');
 const getJwt = require('./users/jwt');
@@ -13,7 +14,7 @@ const getAccounts = (db, secretFileLocation) => {
   }
 
   const jwt = getJwt(secretFileLocation);
-  const users = getUsers(db, jwt);
+  const users = getUsers(db);
   const priviledgedAccountCreation = getNonPriviledgedAccountCreation(db);
 
   return ({
@@ -23,10 +24,12 @@ const getAccounts = (db, secretFileLocation) => {
         if (typeof(username) !== typeof('') || typeof(password) !== typeof('')){
           reject('invalid parameters');
         }else{
-          users.isValidCredentials(username, password).then(token => {
-            resolve(token);
+          users.isValidCredentials(username, password).then(() => {
+            jwt.generateToken(username).then(resolve).catch(() => {
+              reject('could  not generate token');
+            });
           }).catch(() => {
-            reject('could not validate credentials to generate token');
+            reject('invalid credentials');
           })
         }
     }),
