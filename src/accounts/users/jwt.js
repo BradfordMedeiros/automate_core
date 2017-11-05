@@ -89,7 +89,7 @@ const getUserForJwtToken  = (token, secret) => new Promise((resolve, reject) => 
     if (err){
       reject(err);
     }else{
-      resolve(decoded);
+      resolve(decoded.username);
     }
   });
 });

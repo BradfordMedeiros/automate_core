@@ -92,6 +92,7 @@ const create_routes = accounts => {
 
     allData.then(data => {
       const allowAccountCreation = data[0] === false;
+
       const username = data[1];
       res.jsonp({
         username,

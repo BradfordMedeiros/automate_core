@@ -34,11 +34,7 @@ const getAccounts = (db, secretFileLocation) => {
         }
     }),
     generateTokenFromToken: jwt.generateTokenWithToken,
-    getUserForToken: (token) => {
-      return new Promise((resolve, reject) => {
-        resolve('this is mock username');
-      });
-    },
+    getUserForToken: jwt.getUserForToken,
     getUsers: users.getUsers,
     setProfileImage: users.setProfileImage,
     isAccountCreationAdminOnly: priviledgedAccountCreation.isAccountCreationPriviledged,

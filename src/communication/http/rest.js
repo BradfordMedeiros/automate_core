@@ -2,7 +2,6 @@ const express = require("express");
 const bodyParser = require('body-parser');
 const path = require('path');
 
-const create_auth_middleware = require('./middleware/authentication');
 const create_account_routes = require('./routes/accounts');
 
 const create_state_routes = require('./routes/system/states');
@@ -64,9 +63,6 @@ const create_routes = ({
     next();
   });
 
-  router.use(create_auth_middleware(accounts));
-  router.use('/accounts', create_account_routes(accounts));
-
   router.get('/', (req, res) => res.sendFile(path.resolve('./public/index.html')));
   router.use('/states', create_state_routes(system));
   router.use('/actions', create_action_routes(system));
@@ -83,6 +79,7 @@ const create_routes = ({
   router.use('/static', create_static_routes());
   router.use('/email', create_email(emailManager));
   router.use('/lock', create_lock_system_routes(lockSystemManager));
+  router.use('/accounts', create_account_routes(accounts));
 
   router.get('/status', (req, res) => {
     res.jsonp({ status: 'ok' });

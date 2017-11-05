@@ -2,7 +2,7 @@
 const path = require('path');
 const automate_system = require('automate_system');
 const create_routes = require('./src/communication/http/rest');
-const sendEmail = require('./src/util/email/sendEmail');
+const email = require('./src/util/email/email');
 const getDatabaseManager = require ('./src/databaseManager');
 const tileManager = require('./src/tileManager/tileManager');
 const emailManager = require('./src/emailManager');
@@ -68,7 +68,7 @@ getMigratedAccounts().then(accounts => {
           const emailAddress = emailInfo.emailAddress;
           const isEnabled = emailInfo.isEnabled;
           if (isEnabled){
-            sendEmail(emailAddress, eventName, message);
+            email.send_event_notification(emailAddress, eventName, message);
           }
         }).catch(() => {
           console.error('error getting email adddress');
