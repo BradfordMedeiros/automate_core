@@ -17,10 +17,10 @@ const getUsers = db => {
     return hash.digest('hex');
   };
 
-  const getSaltForExistingUser = username => {
+  const getSaltForExistingUser = email => {
     return new Promise((resolve, reject) => {
       db.open().then(database => {
-        database.all(`SELECT salt FROM users WHERE username = '${username}'`, (err, salts) => {
+        database.all(`SELECT salt FROM users WHERE email = '${email}'`, (err, salts) => {
           if (err){
             reject(err);
           }else{
@@ -35,13 +35,23 @@ const getUsers = db => {
     });
   };
 
-  const createUser = (username, password) => {
-    const salt = generateSalt();
-    const passwordHash = hashPassword(password, salt);
-
+  const createUser = (email, password, alias) => {
     return new Promise((resolve, reject) => {
+      if (typeof(email) !== typeof('')){
+        throw (new Error('email not defined'));
+      }
+      if (typeof(password) !== typeof('')){
+        throw (new Error('password not defined'));
+      }
+      if (typeof(alias) !== typeof('')){
+        throw (new Error('alias not defined'));
+      }
+
+      const salt = generateSalt();
+      const passwordHash = hashPassword(password, salt);
+
       db.open().then(database => {
-        database.all(`INSERT INTO users (username, password, salt) values ('${username}','${passwordHash}', '${salt}')`, (err) => {
+        database.all(`INSERT INTO users (email, password, salt, alias) values ('${email}','${passwordHash}', '${salt}', '${alias}')`, (err) => {
           if (err){
             reject(err);
           }else{
@@ -52,10 +62,13 @@ const getUsers = db => {
     });
   };
 
-  const deleteUser = (username) => {
+  const deleteUser = (email) => {
     return new Promise((resolve, reject) => {
+      if (email !== typeof('')){
+        throw (new Error('email not defined'));
+      }
       db.open().then(database => {
-        database.all(`DELETE from users WHERE username = ('${username}')`, (err) => {
+        database.all(`DELETE from users WHERE email = ('${email}')`, (err) => {
           if (err){
             reject(err);
           }else{
@@ -66,25 +79,25 @@ const getUsers = db => {
     });
   };
 
-  const isValidCredentials = (username, password) => {
-    if (typeof(username) !== typeof('')){
-      throw (new Error('username not defined'));
-    }
-    if (typeof(password) !== typeof('')){
-      throw (new Error('password not defined'));
-    }
-
+  const isValidCredentials = (email, password) => {
     return new Promise((resolve, reject) => {
-      getSaltForExistingUser(username).then(salt => {
+      if (typeof(email) !== typeof('')) {
+        throw (new Error('email not defined'));
+      }
+      if (typeof(password) !== typeof('')) {
+        throw (new Error('password not defined'));
+      }
+
+      getSaltForExistingUser(email).then(salt => {
         const hashedPassword = hashPassword(password, salt);
         db.open().then(database => {
-          database.all(`SELECT username, password FROM users WHERE username = '${username}' and password = '${hashedPassword}'`, (err, users) => {
-            if (err){
+          database.all(`SELECT email, password FROM users WHERE email = '${email}' and password = '${hashedPassword}'`, (err, users) => {
+            if (err) {
               reject(err);
-            }else{
-              if (users.length === 1){
+            } else {
+              if (users.length === 1) {
                 resolve();
-              }else{
+              } else {
                 reject();
               }
             }
@@ -92,13 +105,19 @@ const getUsers = db => {
         }).catch(reject);
       }).catch(reject);
     });
+  }
 
-  };
-
-  const setProfileImage = (username, imageUrl) => {
+  const setProfileImage = (email, imageUrl) => {
     return new Promise((resolve, reject) => {
+      if (typeof(email) !== typeof('')){
+        throw (new Error('email not defined'));
+      }
+      if (typeof(imageUrl) !== typeof('')){
+        throw (new Error('image url not defined'));
+      }
+
       db.open().then(database => {
-        database.all(`update users set imageUrl = '${imageUrl}' where username = '${username}'`, (err) => {
+        database.all(`update users set imageUrl = '${imageUrl}' where email = '${email}'`, (err) => {
           if (err){
             reject(err);
           }else{
@@ -109,10 +128,16 @@ const getUsers = db => {
     });
   };
 
+  const getAccountInformation = email => {
+    return new Promise((resolve, reject) => {
+
+    });
+  };
+
   const getUsers = () => {
     return new Promise((resolve, reject) => {
       db.open().then(database => {
-        database.all(`SELECT username, imageURL FROM users`, (err, users) => {
+        database.all(`SELECT email, imageURL FROM users`, (err, users) => {
           if (err) {
             reject(err);
           } else {

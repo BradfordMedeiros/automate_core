@@ -20,12 +20,12 @@ const getAccounts = (db, secretFileLocation) => {
   return ({
     createUser: users.createUser,
     deleteUser: users.deleteUser,
-    generateToken: (username, password) => new Promise((resolve, reject) => {
-        if (typeof(username) !== typeof('') || typeof(password) !== typeof('')){
+    generateToken: (email, password) => new Promise((resolve, reject) => {
+        if (typeof(email) !== typeof('') || typeof(password) !== typeof('')){
           reject('invalid parameters');
         }else{
-          users.isValidCredentials(username, password).then(() => {
-            jwt.generateToken(username).then(resolve).catch(() => {
+          users.isValidCredentials(email, password).then(() => {
+            jwt.generateToken(email).then(resolve).catch(() => {
               reject('could  not generate token');
             });
           }).catch(() => {

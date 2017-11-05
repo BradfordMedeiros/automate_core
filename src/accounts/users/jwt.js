@@ -35,15 +35,15 @@ const saveSecretToLocation = (secretFileLocation, secret) => {
   fs.writeFileSync(secretFileLocation, secret);
 };
 
-const generateJwtToken = (username, secret) => new Promise((resolve, reject) => {
-  if (typeof(username) !== typeof('')){
-    throw (new Error('jwt:generateToken username must be defined as string'));
+const generateJwtToken = (email, secret) => new Promise((resolve, reject) => {
+  if (typeof(email) !== typeof('')){
+    throw (new Error('jwt:generateToken email must be defined as string'));
   }
   if (typeof(secret) !== typeof('')){
     throw (new Error('jwt:generateToken secret must be defined as string'));
   }
 
-  jwt.sign({ username }, secret, (err, token) => {
+  jwt.sign({ email }, secret, (err, token) => {
     if (err){
       reject(err);
     }else{
@@ -64,8 +64,8 @@ const generateJwtTokenWithToken = (token, secret) => new Promise((resolve, rejec
     if (err){
       reject(err);
     }else{
-      const username = decoded.username;
-      jwt.sign({ username }, secret, (err, token) => {
+      const email = decoded.email;
+      jwt.sign({ email }, secret, (err, token) => {
         if (err) {
           reject(err);
         }else{
@@ -89,7 +89,7 @@ const getUserForJwtToken  = (token, secret) => new Promise((resolve, reject) => 
     if (err){
       reject(err);
     }else{
-      resolve(decoded.username);
+      resolve(decoded.email);
     }
   });
 });
@@ -109,7 +109,7 @@ const getJwt = secretFileLocation => {
   }
 
   return ({
-    generateToken: username => generateJwtToken(username, secret),
+    generateToken: email => generateJwtToken(email, secret),
     getUserForToken: token => getUserForJwtToken(token, secret),
     generateTokenWithToken: token => generateJwtTokenWithToken(token, secret),
   });

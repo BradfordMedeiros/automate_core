@@ -1,12 +1,14 @@
 
+// probably should better seperate these into multiple tables
 const createSchema = db => new Promise((resolve, reject) => {
   db.open().then(database => {
     database.all(
       `CREATE TABLE users (
         id	INTEGER PRIMARY KEY AUTOINCREMENT,
-        username	TEXT NOT NULL UNIQUE,
+        email	TEXT NOT NULL UNIQUE,
         password TEXT NOT NULL,
         salt TEXT NOT NULL,
+        alias TEXT NOT NULL UNIQUE,
         imageURL TEXT
       );`, (err) => {
         if (err){

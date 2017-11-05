@@ -19,7 +19,7 @@ const create_routes = accounts => {
   });
 
   router.post('/login', (req, res) => {
-    accounts.generateToken(req.body.username, req.body.password).then(token => {
+    accounts.generateToken(req.body.email, req.body.password).then(token => {
       res.jsonp({
         token,
       });
@@ -39,7 +39,7 @@ const create_routes = accounts => {
   });
 
   router.post('/createUser', (req, res) => {
-    accounts.createUser(req.body.username, req.body.password).then(() => {
+    accounts.createUser(req.body.email, req.body.password, req.body.alias).then(() => {
       res.send('ok');
     }).catch(err => {
       console.log(err);
@@ -48,7 +48,7 @@ const create_routes = accounts => {
   });
 
   router.post('/setProfileImage', (req, res) => {
-    accounts.setProfileImage(req.body.username, req.body.imageUrl).then(() => {
+    accounts.setProfileImage(req.body.email, req.body.imageUrl).then(() => {
       res.send('ok');
     }).catch(err => {
       console.log(err);
@@ -83,20 +83,25 @@ const create_routes = accounts => {
     });
   });
 
-  // going to need token for this, how to handle?
-  router.get('/myAccount', (req, res) => {
+  router.post('/myAccount', (req, res) => {
+
+    if (typeof(req.body.token) !== typeof('')){
+      res.status(400).jsonp({ error: 'invalid parameters' });
+      return;
+    }
+
     const allData = Promise.all([
       accounts.isAccountCreationAdminOnly(),
-      accounts.getUserForToken('test'),
+      accounts.getUserForToken(req.body.token),
     ]);
 
     allData.then(data => {
       const allowAccountCreation = data[0] === false;
+      const email = data[1];
 
-      const username = data[1];
+
       res.jsonp({
-        username,
-        email: 'this is mocked data@email.com',
+        email,
         alias: 'this is mocked, finish accounts routes',
         isAdmin: true,
         admin: {
