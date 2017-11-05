@@ -99,15 +99,20 @@ const create_routes = accounts => {
       const allowAccountCreation = data[0] === false;
       const email = data[1];
 
-
-      res.jsonp({
-        email,
-        alias: 'this is mocked, finish accounts routes',
-        isAdmin: true,
-        admin: {
-          allowAccountCreation,
-          allowEmailReset: true,
-        },
+      accounts.getNonSensitiveInfoForUser(email).then(user => {
+        res.jsonp({
+          email,
+          alias: user.alias,
+          imageURL: user.imageURL,
+          isAdmin: true,
+          admin: {
+            allowAccountCreation,
+            allowEmailReset: true,
+          },
+        });
+      }).catch(err => {
+        console.log(err);
+        res.status(400).jsonp({ error: 'internal server error' });
       });
     }).catch(err => {
       console.log(err);

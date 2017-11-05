@@ -130,8 +130,25 @@ const getUsers = db => {
 
   const getAccountInformation = email => {
     return new Promise((resolve, reject) => {
+      if (typeof(email) !== typeof('')){
+        throw (new Error('email is undefined'));
+      }
 
-    });
+      db.open().then(database => {
+        database.all(`SELECT email, alias, imageURL FROM users where email = '${email}' limit 1`, (err, users) => {
+          if (err) {
+            reject(err);
+          } else {
+            const user = users[0];
+            if (user === undefined){
+              reject('no user found');
+            }else{
+              resolve(user);
+            }
+          }
+        });
+      }).catch(reject);
+    })
   };
 
   const getUsers = () => {
@@ -154,6 +171,7 @@ const getUsers = db => {
     isValidCredentials,
     getUsers,
     setProfileImage,
+    getAccountInformation,
   });
 };
 
