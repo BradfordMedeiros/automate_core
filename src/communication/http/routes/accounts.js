@@ -1,9 +1,12 @@
 
 const express = require('express');
 
-const create_routes = accounts => {
+const create_routes = (accounts, email) => {
   if (accounts === undefined){
     throw (new Error('http:create_routes:accounts accounts must be defined'));
+  }
+  if (email === undefined){
+    throw (new Error('http:create_routes:accounts email must be defined'));
   }
 
   const router = express();
@@ -27,8 +30,6 @@ const create_routes = accounts => {
       res.status(403).jsonp({ error: 'invalid credentials' });
     });
   });
-
-
 
   router.post('/loginWithToken', (req, res) => {
     accounts.generateAuthTokenFromAuthToken(req.body.token).then(token => {
@@ -131,8 +132,34 @@ const create_routes = accounts => {
 
   });
 
-  router.post('/forgotPassword', (req, res) => {
+  router.post('/requestPasswordReset', (req, res) => {
+    console.warn('hardcoding my email here for now, obviously needs to be changed');
+    const userEmail = 'bradmedeiros0@gmail.com';
 
+    accounts.generatePasswordResetToken(userEmail).then(token => {
+      email.send_password_reset(userEmail, token).then(() => {
+        res.send('ok');
+      }).catch(err => {
+        console.error(err);
+        res.status(400).jsonp({ error: 'internal server error' });
+      });
+    }).catch(err => {
+      console.error(err);
+      res.status(400).jsonp({ error: 'internal server error' });
+    });
+  });
+
+  router.post('/confirmResetPasswoord', (req, res) => {
+    getUserForPasswordResetToken(req.body.token).then(email => {
+      accounts.setPassword(email, req.body.new_password).then(() => {
+        res.send('ok');
+      }).catch(() => {
+        res.status(400).jsonp({ error: 'internal server error' });
+      });
+    }).catch(err => {
+      console.error(err);
+      res.status(400).jsonp({ error: 'invalid credentials' });
+    });
   });
 
   return router;

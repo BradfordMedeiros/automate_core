@@ -39,13 +39,13 @@ const send_event_notification = (email_address, topic, message) => {
 };
 
 const passwordResetTemplate = fs.readFileSync(path.join(__dirname, 'html/password_reset.thtml')).toString();
-const send_password_reset = (email_address, automate_url) => {
+const send_password_reset = (email_address, reset_token, automate_url) => {
   return new Promise((resolve, reject) => {
     sendmail({
       from: 'Automate@automate.com',
       to: email_address,
       subject: 'password reset',
-      html:  processTemplate(passwordResetTemplate, { automate_url, reset_token: 'hello world' }),
+      html:  processTemplate(passwordResetTemplate, { automate_url, reset_token }),
     }, err => {
       if (err) {
         reject(err);
@@ -56,8 +56,11 @@ const send_password_reset = (email_address, automate_url) => {
   });
 };
 
-module.exports = {
+const getEmail = automate_url => ({
   send_event_notification,
-  send_password_reset,
-};
+  send_password_reset: (email, reset_token) => send_password_reset(email, reset_token, automate_url),
+});
+
+module.exports = getEmail;
+
 

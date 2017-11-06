@@ -30,6 +30,7 @@ const create_routes = ({
   emailManager,
   lockSystemManager,
   accounts,
+  email,
 }) => {
   if (system === undefined){
     throw (new Error('http:create_routes: system must be defined'));
@@ -48,6 +49,9 @@ const create_routes = ({
   }
   if (accounts === undefined){
     throw (new Error('http:create_routes: accounts must be defined'));
+  }
+  if (email === undefined){
+    throw (new Error('http:create_routes: email must be defined'));
   }
 
   const router = express();
@@ -79,7 +83,7 @@ const create_routes = ({
   router.use('/static', create_static_routes());
   router.use('/email', create_email(emailManager));
   router.use('/lock', create_lock_system_routes(lockSystemManager));
-  router.use('/accounts', create_account_routes(accounts));
+  router.use('/accounts', create_account_routes(accounts, email));
 
   router.get('/status', (req, res) => {
     res.jsonp({ status: 'ok' });

@@ -2,7 +2,7 @@
 const path = require('path');
 const automate_system = require('automate_system');
 const create_routes = require('./src/communication/http/rest');
-const email = require('./src/util/email/email');
+const getEmail = require('./src/util/email/getEmail');
 const getDatabaseManager = require ('./src/databaseManager');
 const tileManager = require('./src/tileManager/tileManager');
 const emailManager = require('./src/emailManager');
@@ -11,6 +11,8 @@ const getAccounts = require('./src/accounts/getAccounts');
 const migrate = require('./src/environment/migrate');
 
 const ACCOUNT_SECRET_FILE = path.resolve('./data/account_secret');
+
+const email = getEmail('http://127.0.0.1:3000');
 
 const getMigratedAccounts = () => new Promise((resolve, reject) => {
   const getDatabase = require('./src/getDatabase');
@@ -76,7 +78,7 @@ getMigratedAccounts().then(accounts => {
       },
     }).then(system => {
       sys = system;
-      const router = create_routes({ system, databaseManager, tileManager, emailManager, lockSystemManager, accounts });
+      const router = create_routes({ system, databaseManager, tileManager, emailManager, lockSystemManager, accounts, email });
       router.listen(PORT, () => console.log("Server start on port " + PORT));
     });
   })
