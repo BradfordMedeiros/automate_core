@@ -125,6 +125,29 @@ const getUsers = db => {
     });
   };
 
+  const getUserHash = email =>  {
+    return new Promise((resolve, reject) => {
+      if (typeof(email) !== typeof('')){
+        throw (new Error('email is undefined'));
+      }
+
+      db.open().then(database => {
+        database.all(`SELECT password FROM users where email = '${email}' limit 1`, (err, users) => {
+          if (err) {
+            reject(err);
+          } else {
+            if (users.length === 0){
+              reject('no user found');
+            }else{
+              const passwordHash = users[0].password;
+              resolve(passwordHash);
+            }
+          }
+        });
+      }).catch(reject);
+    })
+  };
+
   const setPassword = (email, password) =>  {
     return new Promise((resolve, reject) => {
       if (typeof(email) !== typeof('')) {
@@ -134,17 +157,16 @@ const getUsers = db => {
         throw (new Error('password not defined'));
       }
 
-      getSaltForExistingUser(email).then(salt => {
-        const hashedPassword = hashPassword(password, salt);
-        db.open().then(database => {
-          database.all(`update users set password = '${hashedPassword}' where email = '${email}'`, (err) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve();
-            }
-          });
-        }).catch(reject);
+      const newSalt = generateSalt();
+      const hashedPassword = hashPassword(password, newSalt);
+      db.open().then(database => {
+        database.all(`update users set password = '${hashedPassword}', salt = '${newSalt}' where email = '${email}'`, (err) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
+        });
       }).catch(reject);
     });
   };
@@ -232,6 +254,7 @@ const getUsers = db => {
     createUser,
     deleteUser,
     isValidCredentials,
+    getUserHash,
     isUserAdmin,
     getUsers,
     setPassword,

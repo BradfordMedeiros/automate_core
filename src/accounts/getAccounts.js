@@ -37,9 +37,16 @@ const getAccounts = (db, secretFileLocation) => {
     generateAuthTokenFromAuthToken: jwt.generateAuthTokenWithAuthToken,
     getUserForAuthToken: jwt.getUserForAuthToken,
 
-    generatePasswordResetToken: jwt.generatePasswordResetToken,
-    getUserForPasswordResetToken: jwt.getUserForPasswordResetToken,
-
+    generatePasswordResetToken: email => new Promise((resolve, reject) =>  {
+        users.getUserHash(email).then(hash => {
+          jwt.generatePasswordResetToken(email, hash).then(resolve).catch(reject);
+        }).catch(reject);
+    }),
+    getUserForPasswordResetToken:  token => new Promise((resolve, reject) =>  {
+      users.getUserHash(email).then(hash => {
+        jwt.getUserForPasswordResetToken(token, hash).then(resolve).catch(reject);
+      }).catch(reject);
+    }),
     getUsers: users.getUsers,
     getNonSensitiveInfoForUser: users.getAccountInformation,
     isUserAdmin: users.isUserAdmin,

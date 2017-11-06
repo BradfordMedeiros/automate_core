@@ -52,23 +52,6 @@ const generateJwtAuthToken = (email, secret) => new Promise((resolve, reject) =>
   })
 });
 
-const generateJwtPasswordResetToken = (email, secret) => new Promise((resolve, reject) => {
-  if (typeof(email) !== typeof('')){
-    throw (new Error('jwt:generateToken email must be defined as string'));
-  }
-  if (typeof(secret) !== typeof('')){
-    throw (new Error('jwt:generateToken secret must be defined as string'));
-  }
-
-  jwt.sign({ email, type: 'reset' }, secret, (err, token) => {
-    if (err){
-      reject(err);
-    }else{
-      resolve(token);
-    }
-  })
-});
-
 const generateJwtAuthTokenWithAuthToken = (token, secret) => new Promise((resolve, reject) => {
   if(typeof(token) !== typeof('')){
     throw (new  Error('token must be defined'));
@@ -121,12 +104,35 @@ const getUserForJwtAuthToken  = (token, secret) => new Promise((resolve, reject)
   });
 });
 
-const getUserForJwtResetToken  = (token, secret) => new Promise((resolve, reject) => {
-  if (typeof(token) !== typeof('')){
-    throw (new Error('jwt:getUserForToken token must be defined as string'));
+const generateJwtPasswordResetToken = (email, hash, secret) => new Promise((resolve, reject) => {
+  if (typeof(email) !== typeof('')){
+    throw (new Error('jwt:generateJwtPasswordResetToken email must be defined as string'));
+  }
+  if (typeof(hash) !== typeof('')){
+    throw (new Error('jwt:generateJwtPasswordResetToken hash must be defined as string'));
   }
   if (typeof(secret) !== typeof('')){
-    throw (new Error('jwt:generateToken secret must be defined as string'));
+    throw (new Error('jwt:generateJwtPasswordResetToken secret must be defined as string'));
+  }
+
+  jwt.sign({ email, hash,  type: 'reset' }, secret, (err, token) => {
+    if (err){
+      reject(err);
+    }else{
+      resolve(token);
+    }
+  })
+});
+
+const getUserForJwtResetToken  = (token, hash, secret) => new Promise((resolve, reject) => {
+  if (typeof(token) !== typeof('')){
+    throw (new Error('jwt:getUserForJwtResetToken token must be defined as string'));
+  }
+  if (typeof(hash) !== typeof('')){
+    throw (new Error('jwt:getUserForJwtResetToken hash must be defined as string'));
+  }
+  if (typeof(secret) !== typeof('')){
+    throw (new Error('jwt:getUserForJwtResetToken secret must be defined as string'));
   }
 
   jwt.verify(token, secret, (err, decoded) => {
@@ -134,7 +140,7 @@ const getUserForJwtResetToken  = (token, secret) => new Promise((resolve, reject
       reject(err);
     }else{
       const type = decoded.type;
-      if (type === 'reset'){
+      if (type === 'reset'  && (decoded.hash === hash)){
         resolve(decoded.email);
       }else{
         reject('can only get user for a jwt token');
@@ -160,8 +166,8 @@ const getJwt = secretFileLocation => {
     generateAuthToken: email => generateJwtAuthToken (email, secret),
     getUserForAuthToken: token => getUserForJwtAuthToken(token, secret),
     generateAuthTokenWithAuthToken: token => generateJwtAuthTokenWithAuthToken(token, secret),
-    generatePasswordResetToken: email => generateJwtPasswordResetToken(email, secret),
-    getUserForPasswordResetToken: token => getUserForJwtResetToken(token, secret),
+    generatePasswordResetToken: (email, hash) => generateJwtPasswordResetToken(email, hash, secret),
+    getUserForPasswordResetToken: (token, hash) => getUserForJwtResetToken(token,  hash, secret),
   });
 };
 
