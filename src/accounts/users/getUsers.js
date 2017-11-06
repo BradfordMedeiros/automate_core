@@ -35,6 +35,19 @@ const getUsers = db => {
     });
   };
 
+  const getNumberOfUsers = () => new Promise((resolve, reject) => {
+    db.open().then(database => {
+      database.all(`SELECT count(*) as count FROM users`, (err, count) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(count[0].count);
+        }
+      });
+    }).catch(reject);
+  });
+
+  console.warn('@todo create user: need to verify alias is also unique');
   const createUser = (email, password, alias) => {
     return new Promise((resolve, reject) => {
       if (typeof(email) !== typeof('')){
@@ -50,14 +63,19 @@ const getUsers = db => {
       const salt = generateSalt();
       const passwordHash = hashPassword(password, salt);
 
-      db.open().then(database => {
-        database.all(`INSERT INTO users (email, password, salt, alias) values ('${email}','${passwordHash}', '${salt}', '${alias}')`, (err) => {
-          if (err){
-            reject(err);
-          }else{
-            resolve();
-          }
-        });
+      // if there is no user, the first user is the admin
+      getNumberOfUsers().then(count => {
+        const shouldMakeAdmin = count === 0;
+        const adminValue = shouldMakeAdmin ? 1: 0;
+        db.open().then(database => {
+          database.all(`INSERT INTO users (email, password, salt, alias, is_admin) values ('${email}','${passwordHash}', '${salt}', '${alias}', ${adminValue})`, (err) => {
+            if (err){
+              reject(err);
+            }else{
+              resolve();
+            }
+          });
+        }).catch(reject);
       }).catch(reject);
     });
   };
@@ -189,10 +207,32 @@ const getUsers = db => {
     })
   };
 
+  const isUserAdmin = email => new Promise((resolve, reject) => {
+    if (typeof(email) !== typeof('')) {
+      throw (new Error('email is undefined'));
+    }
+
+    db.open().then(database => {
+      database.all(`SELECT is_admin FROM users where email = '${email}' limit 1`, (err, isAdminUser) => {
+        if (err) {
+          reject(err);
+        } else {
+          if (isAdminUser.length === 0){
+            reject('no users found');
+          }else{
+            const isAdmin = (isAdminUser[0].is_admin === 1);
+            resolve(isAdmin);
+          }
+        }
+      });
+    }).catch(reject);
+  });
+
   return ({
     createUser,
     deleteUser,
     isValidCredentials,
+    isUserAdmin,
     getUsers,
     setPassword,
     setProfileImage,

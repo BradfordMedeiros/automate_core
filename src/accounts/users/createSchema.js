@@ -9,6 +9,7 @@ const createSchema = db => new Promise((resolve, reject) => {
         password TEXT NOT NULL,
         salt TEXT NOT NULL,
         alias TEXT NOT NULL UNIQUE,
+        is_admin INTEGER NOT NULL,
         imageURL TEXT
       );`, (err) => {
         if (err){

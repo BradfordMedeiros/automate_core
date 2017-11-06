@@ -19,7 +19,7 @@ const create_routes = accounts => {
   });
 
   router.post('/login', (req, res) => {
-    accounts.generateToken(req.body.email, req.body.password).then(token => {
+    accounts.generateAuthToken(req.body.email, req.body.password).then(token => {
       res.jsonp({
         token,
       });
@@ -28,8 +28,10 @@ const create_routes = accounts => {
     });
   });
 
+
+
   router.post('/loginWithToken', (req, res) => {
-    accounts.generateTokenFromToken(req.body.token).then(token => {
+    accounts.generateAuthTokenFromAuthToken(req.body.token).then(token => {
       res.jsonp({
         token,
       });
@@ -92,22 +94,30 @@ const create_routes = accounts => {
 
     const allData = Promise.all([
       accounts.isAccountCreationAdminOnly(),
-      accounts.getUserForToken(req.body.token),
+      accounts.getUserForAuthToken(req.body.token),
     ]);
 
     allData.then(data => {
       const allowAccountCreation = data[0] === false;
       const email = data[1];
 
-      accounts.getNonSensitiveInfoForUser(email).then(user => {
+      const accountInformationPromise = Promise.all([
+        accounts.getNonSensitiveInfoForUser(email),
+        accounts.isUserAdmin(email),
+        accounts.isAccountCreationAdminOnly()
+      ]);
+
+      accountInformationPromise.then(data=> {
+        const user = data[0];
+        const isAdmin = data[1];
+        const allowAccountCreation = !data[2];
         res.jsonp({
           email,
           alias: user.alias,
           imageURL: user.imageURL,
-          isAdmin: true,
+          isAdmin,
           admin: {
             allowAccountCreation,
-            allowEmailReset: true,
           },
         });
       }).catch(err => {
@@ -118,6 +128,10 @@ const create_routes = accounts => {
       console.log(err);
       res.status(400).jsonp({ error: 'internal server error' });
     });
+
+  });
+
+  router.post('/forgotPassword', (req, res) => {
 
   });
 

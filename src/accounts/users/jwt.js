@@ -35,7 +35,7 @@ const saveSecretToLocation = (secretFileLocation, secret) => {
   fs.writeFileSync(secretFileLocation, secret);
 };
 
-const generateJwtToken = (email, secret) => new Promise((resolve, reject) => {
+const generateJwtAuthToken = (email, secret) => new Promise((resolve, reject) => {
   if (typeof(email) !== typeof('')){
     throw (new Error('jwt:generateToken email must be defined as string'));
   }
@@ -43,7 +43,7 @@ const generateJwtToken = (email, secret) => new Promise((resolve, reject) => {
     throw (new Error('jwt:generateToken secret must be defined as string'));
   }
 
-  jwt.sign({ email }, secret, (err, token) => {
+  jwt.sign({ email, type: 'auth' }, secret, (err, token) => {
     if (err){
       reject(err);
     }else{
@@ -52,7 +52,24 @@ const generateJwtToken = (email, secret) => new Promise((resolve, reject) => {
   })
 });
 
-const generateJwtTokenWithToken = (token, secret) => new Promise((resolve, reject) => {
+const generateJwtPasswordResetToken = (email, secret) => new Promise((resolve, reject) => {
+  if (typeof(email) !== typeof('')){
+    throw (new Error('jwt:generateToken email must be defined as string'));
+  }
+  if (typeof(secret) !== typeof('')){
+    throw (new Error('jwt:generateToken secret must be defined as string'));
+  }
+
+  jwt.sign({ email, type: 'reset' }, secret, (err, token) => {
+    if (err){
+      reject(err);
+    }else{
+      resolve(token);
+    }
+  })
+});
+
+const generateJwtAuthTokenWithAuthToken = (token, secret) => new Promise((resolve, reject) => {
   if(typeof(token) !== typeof('')){
     throw (new  Error('token must be defined'));
   }
@@ -65,19 +82,24 @@ const generateJwtTokenWithToken = (token, secret) => new Promise((resolve, rejec
       reject(err);
     }else{
       const email = decoded.email;
-      jwt.sign({ email }, secret, (err, token) => {
-        if (err) {
-          reject(err);
-        }else{
-          resolve(token);
-        }
-      });
+      const type = decoded.type;
+
+      if (type !== 'auth'){
+        reject('incorrect token type, but generated from automate');
+      }else{
+        jwt.sign({ email, type: 'auth' }, secret, (err, token) => {
+          if (err) {
+            reject(err);
+          }else{
+            resolve(token);
+          }
+        });
+      }
     }
   });
 });
 
-
-const getUserForJwtToken  = (token, secret) => new Promise((resolve, reject) => {
+const getUserForJwtAuthToken  = (token, secret) => new Promise((resolve, reject) => {
   if (typeof(token) !== typeof('')){
     throw (new Error('jwt:getUserForToken token must be defined as string'));
   }
@@ -89,7 +111,34 @@ const getUserForJwtToken  = (token, secret) => new Promise((resolve, reject) => 
     if (err){
       reject(err);
     }else{
-      resolve(decoded.email);
+      const type = decoded.type;
+      if (type === 'auth'){
+        resolve(decoded.email);
+      }else{
+        reject('incorrect token type, but generated from automate');
+      }
+    }
+  });
+});
+
+const getUserForJwtResetToken  = (token, secret) => new Promise((resolve, reject) => {
+  if (typeof(token) !== typeof('')){
+    throw (new Error('jwt:getUserForToken token must be defined as string'));
+  }
+  if (typeof(secret) !== typeof('')){
+    throw (new Error('jwt:generateToken secret must be defined as string'));
+  }
+
+  jwt.verify(token, secret, (err, decoded) => {
+    if (err){
+      reject(err);
+    }else{
+      const type = decoded.type;
+      if (type === 'reset'){
+        resolve(decoded.email);
+      }else{
+        reject('can only get user for a jwt token');
+      }
     }
   });
 });
@@ -107,11 +156,12 @@ const getJwt = secretFileLocation => {
     secret = generateSecret();
     saveSecretToLocation(secretFileLocation, secret);
   }
-
   return ({
-    generateToken: email => generateJwtToken(email, secret),
-    getUserForToken: token => getUserForJwtToken(token, secret),
-    generateTokenWithToken: token => generateJwtTokenWithToken(token, secret),
+    generateAuthToken: email => generateJwtAuthToken (email, secret),
+    getUserForAuthToken: token => getUserForJwtAuthToken(token, secret),
+    generateAuthTokenWithAuthToken: token => generateJwtAuthTokenWithAuthToken(token, secret),
+    generatePasswordResetToken: email => generateJwtPasswordResetToken(email, secret),
+    getUserForPasswordResetToken: token => getUserForJwtResetToken(token, secret),
   });
 };
 

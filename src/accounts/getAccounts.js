@@ -20,25 +20,32 @@ const getAccounts = (db, secretFileLocation) => {
   return ({
     createUser: users.createUser,
     deleteUser: users.deleteUser,
-    generateToken: (email, password) => new Promise((resolve, reject) => {
-        if (typeof(email) !== typeof('') || typeof(password) !== typeof('')){
-          reject('invalid parameters');
-        }else{
-          users.isValidCredentials(email, password).then(() => {
-            jwt.generateToken(email).then(resolve).catch(() => {
-              reject('could  not generate token');
-            });
-          }).catch(() => {
-            reject('invalid credentials');
-          })
-        }
+
+    generateAuthToken: (email, password) => new Promise((resolve, reject) => {
+      if (typeof(email) !== typeof('') || typeof(password) !== typeof('')) {
+        reject('invalid parameters');
+      } else {
+        users.isValidCredentials(email, password).then(() => {
+          jwt.generateAuthToken(email).then(resolve).catch(() => {
+            reject('could  not generate token');
+          });
+        }).catch(() => {
+          reject('invalid credentials');
+        })
+      }
     }),
-    generateTokenFromToken: jwt.generateTokenWithToken,
-    getUserForToken: jwt.getUserForToken,
+    generateAuthTokenFromAuthToken: jwt.generateAuthTokenWithAuthToken,
+    getUserForAuthToken: jwt.getUserForAuthToken,
+
+    generatePasswordResetToken: jwt.generatePasswordResetToken,
+    getUserForPasswordResetToken: jwt.getUserForPasswordResetToken,
+
     getUsers: users.getUsers,
+    getNonSensitiveInfoForUser: users.getAccountInformation,
+    isUserAdmin: users.isUserAdmin,
     setPassword: users.setPassword,
     setProfileImage: users.setProfileImage,
-    getNonSensitiveInfoForUser: users.getAccountInformation,
+
     isAccountCreationAdminOnly: priviledgedAccountCreation.isAccountCreationPriviledged,
     enableAdminOnlyAccountCreation: priviledgedAccountCreation.enableNonPriviledgedAccountCreation,
     disableAdminOnlyAccountCreation: priviledgedAccountCreation.disableNonPriviledgedAccountCreation,
