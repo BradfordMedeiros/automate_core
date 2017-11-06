@@ -134,13 +134,34 @@ const getUserForJwtResetToken  = (token, hash, secret) => new Promise((resolve, 
   if (typeof(secret) !== typeof('')){
     throw (new Error('jwt:getUserForJwtResetToken secret must be defined as string'));
   }
-
   jwt.verify(token, secret, (err, decoded) => {
     if (err){
       reject(err);
     }else{
       const type = decoded.type;
       if (type === 'reset'  && (decoded.hash === hash)){
+        resolve(decoded.email);
+      }else{
+        reject('can only get user for a jwt token');
+      }
+    }
+  });
+});
+
+const getUserForJwtResetTokenWithoutHashConfirm  = (token, secret) => new Promise((resolve, reject) => {
+  if (typeof(token) !== typeof('')){
+    throw (new Error('jwt:getUserForJwtResetToken token must be defined as string'));
+  }
+  if (typeof(secret) !== typeof('')){
+    throw (new Error('jwt:getUserForJwtResetToken secret must be defined as string'));
+  }
+
+  jwt.verify(token, secret, (err, decoded) => {
+    if (err){
+      reject(err);
+    }else{
+      const type = decoded.type;
+      if (type === 'reset'){
         resolve(decoded.email);
       }else{
         reject('can only get user for a jwt token');
@@ -168,6 +189,7 @@ const getJwt = secretFileLocation => {
     generateAuthTokenWithAuthToken: token => generateJwtAuthTokenWithAuthToken(token, secret),
     generatePasswordResetToken: (email, hash) => generateJwtPasswordResetToken(email, hash, secret),
     getUserForPasswordResetToken: (token, hash) => getUserForJwtResetToken(token,  hash, secret),
+    getUserForJwtResetTokenWithoutHashConfirm: token => getUserForJwtResetTokenWithoutHashConfirm(token, secret),
   });
 };
 

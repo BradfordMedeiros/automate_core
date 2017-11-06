@@ -149,8 +149,8 @@ const create_routes = (accounts, email) => {
     });
   });
 
-  router.post('/confirmResetPasswoord', (req, res) => {
-    getUserForPasswordResetToken(req.body.token).then(email => {
+  router.post('/confirmResetPassword', (req, res) => {
+    accounts.getUserForPasswordResetToken(req.body.token).then(email => {
       accounts.setPassword(email, req.body.new_password).then(() => {
         res.send('ok');
       }).catch(() => {

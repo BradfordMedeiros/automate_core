@@ -43,8 +43,10 @@ const getAccounts = (db, secretFileLocation) => {
         }).catch(reject);
     }),
     getUserForPasswordResetToken:  token => new Promise((resolve, reject) =>  {
-      users.getUserHash(email).then(hash => {
-        jwt.getUserForPasswordResetToken(token, hash).then(resolve).catch(reject);
+      jwt.getUserForJwtResetTokenWithoutHashConfirm(token).then(email => {
+        users.getUserHash(email).then(hash => {
+          jwt.getUserForPasswordResetToken(token, hash).then(resolve).catch(reject);
+        }).catch(reject);
       }).catch(reject);
     }),
     getUsers: users.getUsers,
