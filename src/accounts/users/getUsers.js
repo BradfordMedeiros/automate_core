@@ -105,7 +105,31 @@ const getUsers = db => {
         }).catch(reject);
       }).catch(reject);
     });
-  }
+  };
+
+  const setPassword = (email, password) =>  {
+    return new Promise((resolve, reject) => {
+      if (typeof(email) !== typeof('')) {
+        throw (new Error('email not defined'));
+      }
+      if (typeof(password) !== typeof('')) {
+        throw (new Error('password not defined'));
+      }
+
+      getSaltForExistingUser(email).then(salt => {
+        const hashedPassword = hashPassword(password, salt);
+        db.open().then(database => {
+          database.all(`update users set password = '${hashedPassword}' where email = '${email}'`, (err) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve();
+            }
+          });
+        }).catch(reject);
+      }).catch(reject);
+    });
+  };
 
   const setProfileImage = (email, imageUrl) => {
     return new Promise((resolve, reject) => {
@@ -170,6 +194,7 @@ const getUsers = db => {
     deleteUser,
     isValidCredentials,
     getUsers,
+    setPassword,
     setProfileImage,
     getAccountInformation,
   });

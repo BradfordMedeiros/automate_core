@@ -36,6 +36,7 @@ const getAccounts = (db, secretFileLocation) => {
     generateTokenFromToken: jwt.generateTokenWithToken,
     getUserForToken: jwt.getUserForToken,
     getUsers: users.getUsers,
+    setPassword: users.setPassword,
     setProfileImage: users.setProfileImage,
     getNonSensitiveInfoForUser: users.getAccountInformation,
     isAccountCreationAdminOnly: priviledgedAccountCreation.isAccountCreationPriviledged,
