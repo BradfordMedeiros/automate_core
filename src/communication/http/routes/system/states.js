@@ -37,17 +37,16 @@ const create_routes = system => {
      const name = path.relative('/modify', req.url);
      const stateEval = req.body.stateEval;
 
-     if (system.engines.stateScriptEngine.getStateScripts()[name]){
+     const handleError = () => res.status(500).jsonp({ error: 'internal server error' });
+     const handleOk = () => res.status(200).send('ok');
+
+    if (system.engines.stateScriptEngine.getStateScripts()[name]){
        system.engines.stateScriptEngine.deleteStateScript(name).then(() => {
-         system.engines.stateScriptEngine.addStateScript(name, name, stateEval ? stateEval : '');
-       }).catch(() => {
-         res.status(500).jsonp({ error: 'internal server error' })
-         return;
-       });
+         system.engines.stateScriptEngine.addStateScript(name, name, stateEval ? stateEval : '').then(handleOk).catch(handleError);
+       }).catch(handleError);
      }else{
-       system.engines.stateScriptEngine.addStateScript(name, name, stateEval ? stateEval : '');
+       system.engines.stateScriptEngine.addStateScript(name, name, stateEval ? stateEval : '').then(handleOk).catch(handleError);
      }
-    res.status(200).send('ok');
   });
 
   router.delete('/*', (req, res) => {
@@ -57,7 +56,7 @@ const create_routes = system => {
       system.engines.stateScriptEngine.deleteStateScript(name).then(() => {
         system.baseSystem.states.unregister(name);
         res.status(200).send('ok');
-      }).catch(res.status(500).jsonp({ error: 'internal server error' }));
+      }).catch(() => res.status(500).jsonp({ error: 'internal server error' }));
     }else{
       system.baseSystem.states.unregister(name);
       res.status(200).send('ok');
