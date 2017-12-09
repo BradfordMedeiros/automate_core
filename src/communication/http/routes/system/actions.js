@@ -75,9 +75,12 @@ const create_routes = system => {
 
     if (system.engines.actionScriptEngine.getActionScripts()[name]){
       system.engines.actionScriptEngine.deleteActionScript(name).then(() => {
-        system.baseSystem.actions.unregister(name);
-        res.status(200).send('ok');
-      }).catch(res.status(500).jsonp({ error: 'internal server error' }));
+        system.baseSystem.actions.unregister(name).then(() => {
+          res.status(200).send('ok');
+        }).catch(() => {
+          res.status(500).jsonp({ error: 'internal server error' });
+        });
+      }).catch(() => res.status(500).jsonp({ error: 'internal server error' }));
     }else{
       system.baseSystem.actions.unregister(name);
       res.status(200).send('ok');
