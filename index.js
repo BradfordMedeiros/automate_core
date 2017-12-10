@@ -15,6 +15,9 @@ const ACCOUNT_SECRET_FILE = path.resolve('./data/account_secret');
 
 const email = getEmail('http://127.0.0.1:3000');
 
+// accounts code has it's  own database.  This is a database in this project
+// the other database is part of automate system dependency, which is considered different enough
+// to separate the dbs
 const getMigratedAccounts = () => new Promise((resolve, reject) => {
   const getDatabase = require('./src/getDatabase');
   if (migrate.isMigrated('./accounts.db')){
@@ -54,6 +57,7 @@ getMigratedAccounts().then(accounts => {
     });
   });
 
+  // once we have the selected database, initialize automate
   getInitialDatabase.then(databaseName => {
     const dbPath = databaseManager.getDatabasePath(databaseName);
     automate_system.init({
@@ -74,16 +78,15 @@ getMigratedAccounts().then(accounts => {
         console.log('message: ', message);
         const messageAsNumber = Number(message);
         console.log('value  is: ', messageAsNumber);
-        if (isNaN(messageAsNumber)) {
-          return;
-        }
-        writeInfluxPoint(topic, messageAsNumber).then(() => {
+
+        const valueToWrite = isNaN(messageAsNumber) ? message: messageAsNumber;
+        writeInfluxPoint(topic, valueToWrite).then(() => {
           console.log('wrote: ', topic, ' to influx successfully');
         }).catch(err => {
           console.error('error writing to influx');
           console.error(err);
         })
-      }
+      },
       onEvent: ({ eventName, message }) => {
         emailManager.getEmailInfo().then(emailInfo => {
           const emailAddress = emailInfo.emailAddress;
@@ -97,6 +100,8 @@ getMigratedAccounts().then(accounts => {
       },
     }).then(system => {
       sys = system;
+
+      // start the webserver
       const router = create_routes({ system, databaseManager, tileManager, emailManager, lockSystemManager, accounts, email });
       router.listen(PORT, () => console.log("Server start on port " + PORT));
     });
