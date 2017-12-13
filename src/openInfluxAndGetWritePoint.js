@@ -20,6 +20,7 @@ const openInfluxAndGetWritePoint = () => {
       {
         measurement: topic,
         fields: { value },
+        tags: { t_value: value }
       }
     ]).then(resolve).catch(reject);
   });
