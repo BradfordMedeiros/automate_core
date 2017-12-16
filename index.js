@@ -77,11 +77,10 @@ getMigratedAccounts().then(accounts => {
         console.log('topic: ', topic);
         console.log('message: ', message);
         const messageAsNumber = Number(message);
-        console.log('value  is: ', messageAsNumber);
 
         const valueToWrite = isNaN(messageAsNumber) ? message: messageAsNumber;
         writeInfluxPoint(topic, valueToWrite).then(() => {
-          console.log('wrote: ', topic, ' to influx successfully');
+          console.log('wrote: ', topic, ' to influx successfully with value: ', valueToWrite);
         }).catch(err => {
           console.error('error writing to influx');
           console.error(err);
