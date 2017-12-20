@@ -22,6 +22,7 @@ const create_core_info = require('./routes/core_info');
 const create_lock_system_routes = require('./routes/lock_system');
 const create_env = require('./routes/system/env');
 const create_email = require('./routes/email');
+const create_custom_theme_routes = require('./routes/custom_theme');
 
 const create_routes = ({
   system,
@@ -31,6 +32,7 @@ const create_routes = ({
   lockSystemManager,
   accounts,
   email,
+  customTheme,
 }) => {
   if (system === undefined){
     throw (new Error('http:create_routes: system must be defined'));
@@ -52,6 +54,9 @@ const create_routes = ({
   }
   if (email === undefined){
     throw (new Error('http:create_routes: email must be defined'));
+  }
+  if (customTheme === undefined){
+    throw (new Error('http:create_routes: customTheme must be defined'));
   }
 
   const router = express();
@@ -84,6 +89,7 @@ const create_routes = ({
   router.use('/email', create_email(emailManager));
   router.use('/lock', create_lock_system_routes(lockSystemManager));
   router.use('/accounts', create_account_routes(accounts, email));
+  router.use('/theme', create_custom_theme_routes(customTheme));
 
   router.get('/status', (req, res) => {
     res.jsonp({ status: 'ok' });

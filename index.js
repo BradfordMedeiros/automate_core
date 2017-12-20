@@ -8,6 +8,7 @@ const openInfluxAndGetWritePoint = require('./src/openInfluxAndGetWritePoint');
 const tileManager = require('./src/tileManager/tileManager');
 const emailManager = require('./src/emailManager');
 const lockSystemManager = require('./src/lockSystemManager');
+const customTheme = require('./src/customTheme');
 const getAccounts = require('./src/accounts/getAccounts');
 const migrate = require('./src/environment/migrate');
 
@@ -73,15 +74,9 @@ getMigratedAccounts().then(accounts => {
         port: 4001,
       },
       onTopic: ({ topic, message }) => {
-        console.log('-----------');
-        console.log('topic: ', topic);
-        console.log('message: ', message);
         const messageAsNumber = Number(message);
-
         const valueToWrite = isNaN(messageAsNumber) ? message: messageAsNumber;
-        writeInfluxPoint(topic, valueToWrite).then(() => {
-          console.log('wrote: ', topic, ' to influx successfully with value: ', valueToWrite);
-        }).catch(err => {
+        writeInfluxPoint(topic, valueToWrite).catch(err => {
           console.error('error writing to influx');
           console.error(err);
         })
@@ -101,7 +96,16 @@ getMigratedAccounts().then(accounts => {
       sys = system;
 
       // start the webserver
-      const router = create_routes({ system, databaseManager, tileManager, emailManager, lockSystemManager, accounts, email });
+      const router = create_routes({
+        system,
+        databaseManager,
+        tileManager,
+        emailManager,
+        lockSystemManager,
+        accounts,
+        email,
+        customTheme,
+      });
       router.listen(PORT, () => console.log("Server start on port " + PORT));
     });
   })
