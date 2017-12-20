@@ -1,25 +1,35 @@
 
-let theTheme = "";
+const fs = require('fs');
+const path = require('path');
+
+const defaultTheme = "";
+const user_style_sheet_path = path.resolve('./public/user_style.css');
+
 const getTheme = () => new Promise((resolve, reject) => {
-  console.log('get theme!');
-  resolve(theTheme);
+  fs.readFile(user_style_sheet_path, (err, content) => {
+    if (err){
+      reject(err);
+    }else{
+      resolve(content);
+    }
+  });
 });
 
 const saveTheme = theme => new Promise((resolve, reject) => {
-  console.log('save theme!');
   if (typeof(theme) !== typeof("")){
     reject("invalid theme type as parameter");
     return;
   }
-  theTheme = theme;
-  resolve();
+  fs.writeFile(user_style_sheet_path, theme, err => {
+    if (err){
+      reject(err);
+    }else{
+      resolve();
+    }
+  });
 });
 
-const deleteTheme = () => new Promise((resolve, reject) => {
-  console.log('delete theme!');
-  theTheme = "";
-  resolve();
-});
+const deleteTheme = () => saveTheme(defaultTheme);
 
 module.exports = {
   getTheme,
