@@ -13,21 +13,25 @@ const create_routes = customTheme  => {
   const router = express();
 
   router.get('/', (req, res) => {
-    customTheme.getTheme().then(() => {
-      res.send('get ok');
+    customTheme.getTheme().then(theme => {
+      res.send(theme);
     }).catch(err => {
       handleError(err, res);
     });
   });
 
   router.post('/', (req, res) => {
-    customTheme.saveTheme().then(() => {
+    const content = req.body.style;
+    if (typeof(content) !== typeof("")){
+      handleError('invalid parameters', res);
+      return;
+    }
+    customTheme.saveTheme(content).then(() => {
       res.send('save ok');
     }).catch(err => {
       handleError(err, res);
     });
   });
-
 
   router.delete('/', (req, res) => {
     customTheme.deleteTheme().then(() => {
