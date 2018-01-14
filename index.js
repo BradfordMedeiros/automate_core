@@ -11,6 +11,7 @@ const lockSystemManager = require('./src/lockSystemManager');
 const customTheme = require('./src/customTheme');
 const getAccounts = require('./src/accounts/getAccounts');
 const migrate = require('./src/environment/migrate');
+const customScriptApi = require('./src/customScriptApi');
 
 const ACCOUNT_SECRET_FILE = path.resolve('./data/account_secret');
 
@@ -92,6 +93,7 @@ getMigratedAccounts().then(accounts => {
           console.error('error getting email adddress');
         });
       },
+      api: customScriptApi,
     }).then(system => {
       sys = system;
 
