@@ -13,7 +13,6 @@ const create_schedule_routes = require('./routes/system/schedules');
 const create_rules_routes = require('./routes/system/rules');
 
 const create_event_routes = require('./routes/events');
-const create_topic_routes = require('./routes/topics');
 
 const create_database_routes = require('./routes/databases');
 const create_tile_routes =  require('./routes/tiles');
@@ -80,7 +79,6 @@ const create_routes = ({
   router.use('/schedules', create_schedule_routes(system));
   router.use('/rules', create_rules_routes(system));
   router.use('/events', create_event_routes(system));
-  router.use('/topics', create_topic_routes(system));
   router.use('/env', create_env(system));
   router.use('/info', create_core_info());
   router.use('/databases', create_database_routes(databaseManager));
