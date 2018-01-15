@@ -21,7 +21,10 @@ const create_routes = system => {
         content: (hasStateScript?
                     system.engines.stateScriptEngine.getStateScripts()[stateName].evalString:
                     'no data'),
-      })
+        rate:  (hasStateScript?
+          system.engines.stateScriptEngine.getStateScripts()[stateName].rate:
+          null),
+    })
     });
     res.jsonp({
       states: statesArray,
@@ -36,16 +39,17 @@ const create_routes = system => {
 
      const name = path.relative('/modify', req.url);
      const stateEval = req.body.stateEval;
+     const rate = Number(req.body.rate);
 
      const handleError = () => res.status(500).jsonp({ error: 'internal server error' });
      const handleOk = () => res.status(200).send('ok');
 
     if (system.engines.stateScriptEngine.getStateScripts()[name]){
        system.engines.stateScriptEngine.deleteStateScript(name).then(() => {
-         system.engines.stateScriptEngine.addStateScript(name, name, stateEval ? stateEval : '').then(handleOk).catch(handleError);
+         system.engines.stateScriptEngine.addStateScript(name, name, stateEval ? stateEval : '', rate).then(handleOk).catch(handleError);
        }).catch(handleError);
      }else{
-       system.engines.stateScriptEngine.addStateScript(name, name, stateEval ? stateEval : '').then(handleOk).catch(handleError);
+       system.engines.stateScriptEngine.addStateScript(name, name, stateEval ? stateEval : '', rate).then(handleOk).catch(handleError);
      }
   });
 
