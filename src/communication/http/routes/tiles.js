@@ -31,7 +31,8 @@ const create_routes = tileManager  => {
         const fileName = Object.keys(files)[0];
         const oldpath = files[fileName].path;
         const newpath = path.resolve(`./public/tiles/${tileName}`);
-        const tileIndex = `${newpath}/index.html`;
+        const tileIndexHtml = `${newpath}/index.html`;
+        const tileOverlayHtml = `${newpath}/overlay.html`;
 
         targz.decompress({
           src: oldpath,
@@ -41,8 +42,14 @@ const create_routes = tileManager  => {
             console.log('error decompressing file');
             res.status(400).jsonp({ error: 'internal server error' });
           }else{
-            console.log('--tileIndex: ', tileIndex);
-            tileManager.injectAllScripts(tileIndex, '127.0.0.1').then(() => {
+
+            const injectScripts = Promise.all([
+              tileManager.injectAllScripts(tileIndexHtml, '127.0.0.1'),
+              tileManager.injectAllScripts(tileOverlayHtml, '127.0.0.1'),
+            ]);
+            console.log('--tileIndexIndex: ', tileIndexHtml);
+            console.log('tile overlay: ', tileIndexHtml);
+            injectScripts.then(() => {
               res.send('ok');
             }).catch(() => {
               tileManager.deleteTile(tileName).then(() => {
