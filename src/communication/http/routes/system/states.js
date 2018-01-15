@@ -38,18 +38,23 @@ const create_routes = system => {
      }
 
      const name = path.relative('/modify', req.url);
-     const stateEval = req.body.stateEval;
-     const rate = Number(req.body.rate);
+     const stateEval = req.body.stateEval || ' ';
+     const rate = req.body.rate || 1000;
+
+     if (typeof(stateEval) !== 'string' || typeof(rate) !== 'number'){
+       res.status(400).jsonp({ error: 'invalid parameters in body' });
+       return;
+     }
 
      const handleError = () => res.status(500).jsonp({ error: 'internal server error' });
      const handleOk = () => res.status(200).send('ok');
 
     if (system.engines.stateScriptEngine.getStateScripts()[name]){
        system.engines.stateScriptEngine.deleteStateScript(name).then(() => {
-         system.engines.stateScriptEngine.addStateScript(name, name, stateEval ? stateEval : '', rate).then(handleOk).catch(handleError);
+         system.engines.stateScriptEngine.addStateScript(name, name, stateEval, rate).then(handleOk).catch(handleError);
        }).catch(handleError);
      }else{
-       system.engines.stateScriptEngine.addStateScript(name, name, stateEval ? stateEval : '', rate).then(handleOk).catch(handleError);
+       system.engines.stateScriptEngine.addStateScript(name, name, stateEval, rate).then(handleOk).catch(handleError);
      }
   });
 
