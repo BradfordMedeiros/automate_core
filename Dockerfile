@@ -6,10 +6,6 @@ WORKDIR /automate
 ADD . .
 
 # Install project npm dependencies
-wget https://archive.raspbian.org/raspbian/pool/main/g/gcc-4.7/libstdc++6_4.7.2-5%2Brpi1_armhf.deb
-dpkg-deb -x libstdc++6_4.7.2-5%2brpi1_armhf.deb /
-dpkg -i --force-all libstdc++6_4.7.2-5%2brpi1_armhf.deb
-
 RUN mkdir databases/dbs
 RUN npm install
 
