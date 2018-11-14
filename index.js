@@ -1,10 +1,8 @@
-
 const path = require('path');
 const automate_system = require('automate_system');
 const create_routes = require('./src/communication/http/rest');
 const getEmail = require('./src/util/email/getEmail');
 const getDatabaseManager = require ('./src/databaseManager');
-const openInfluxAndGetWritePoint = require('./src/openInfluxAndGetWritePoint');
 const tileManager = require('./src/tileManager/tileManager');
 const emailManager = require('./src/emailManager');
 const lockSystemManager = require('./src/lockSystemManager');
@@ -40,8 +38,6 @@ const getMigratedAccounts = () => new Promise((resolve, reject) => {
 
 getMigratedAccounts().then(accounts => {
   const PORT = 9000;
-
-  const writeInfluxPoint = openInfluxAndGetWritePoint();
   const databaseManager = getDatabaseManager(automate_system.migrateDatabase);
 
   // database manager is getting the active database to we can pass that to automate system
@@ -75,12 +71,7 @@ getMigratedAccounts().then(accounts => {
         port: 4001,
       },
       onTopic: ({ topic, message }) => {
-        const messageAsNumber = Number(message);
-        const valueToWrite = isNaN(messageAsNumber) ? message: messageAsNumber;
-        writeInfluxPoint(topic, valueToWrite).catch(err => {
-          console.error('error writing to influx');
-          console.error(err);
-        })
+        // do nothing 
       },
       onEvent: ({ eventName, message }) => {
         emailManager.getEmailInfo().then(emailInfo => {
