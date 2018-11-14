@@ -4,9 +4,6 @@
   "description": "Backend for automate_ui",
   "main": "index.js",
   "private": true,
-  "directories": {
-    "example": "examples"
-  },
   "scripts": {
     "start": "./node index.js",
     "start-dev": "NODE_ENV=development nodemon index.js --watch src --exec",
