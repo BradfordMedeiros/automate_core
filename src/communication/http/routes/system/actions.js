@@ -24,21 +24,10 @@ const create_routes = system => {
   const router = express();
   router.get('/', (req, res) => {
     const systemActions = system.baseSystem.actions.getActions();
-
-    const actionsArray = Object.keys(systemActions).map(actionName => {
-      const hasActionScript = system.engines.actionScriptEngine.getActionScripts()[actionName] !== undefined;
-
-      return ({
-        name: actionName,
-        type: hasActionScript ? 'javascript' : 'mqtt',
-        content: (hasActionScript ?
-            system.engines.actionScriptEngine.getActionScripts()[actionName].script :
-            ''
-          )
-      })
-    });
     res.jsonp({
-      actions: actionsArray,
+      actions: Object.keys(systemActions).map(actionName => ({
+        name: actionName,
+      }))
     });
   });
 
