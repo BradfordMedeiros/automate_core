@@ -27,6 +27,7 @@ const create_routes = system => {
     res.jsonp({
       actions: Object.keys(systemActions).map(actionName => ({
         name: actionName,
+        value: systemActions[actionName].value,
       }))
     });
   });
