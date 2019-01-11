@@ -9,67 +9,16 @@ const create_routes = system => {
 
   const router = express();
 
+  const systemStates = system.baseSystem.states.getStates();
+  const states  = Object.keys(systemStates).map(stateKey => ({
+    topic: systemStates[stateKey].topic,
+    value: systemStates[stateKey].value,
+  }));
+
   router.get('/', (req, res) => {
-
-    const systemStates = system.baseSystem.states.getStates();
-
-    const statesArray = Object.keys(systemStates).map(stateName => {
-      const hasStateScript = system.engines.stateScriptEngine.getStateScripts()[stateName] !== undefined;
-      return ({
-        name: stateName,
-        type: hasStateScript ? 'javascript': 'mqtt',
-        content: (hasStateScript?
-                    system.engines.stateScriptEngine.getStateScripts()[stateName].evalString:
-                    'no data'),
-        rate:  (hasStateScript?
-          system.engines.stateScriptEngine.getStateScripts()[stateName].rate:
-          null),
-    })
-    });
     res.jsonp({
-      states: statesArray,
+      states,
     });
-  });
-
-  router.post('/modify/*', (req, res) => {
-     if (req.body === undefined){
-        res.status(400).jsonp({ error: 'invalid parameters' });
-        return;
-     }
-
-     const name = path.relative('/modify', req.url);
-     const stateEval = req.body.stateEval || ' ';
-     const rate = req.body.rate || 1000;
-
-     if (typeof(stateEval) !== 'string' || typeof(rate) !== 'number'){
-       res.status(400).jsonp({ error: 'invalid parameters in body' });
-       return;
-     }
-
-     const handleError = () => res.status(500).jsonp({ error: 'internal server error' });
-     const handleOk = () => res.status(200).send('ok');
-
-    if (system.engines.stateScriptEngine.getStateScripts()[name]){
-       system.engines.stateScriptEngine.deleteStateScript(name).then(() => {
-         system.engines.stateScriptEngine.addStateScript(name, name, stateEval, rate).then(handleOk).catch(handleError);
-       }).catch(handleError);
-     }else{
-       system.engines.stateScriptEngine.addStateScript(name, name, stateEval, rate).then(handleOk).catch(handleError);
-     }
-  });
-
-  router.delete('/*', (req, res) => {
-    const name = path.relative('/', req.url);
-
-    if (system.engines.stateScriptEngine.getStateScripts()[name]){
-      system.engines.stateScriptEngine.deleteStateScript(name).then(() => {
-        system.baseSystem.states.unregister(name);
-        res.status(200).send('ok');
-      }).catch(() => res.status(500).jsonp({ error: 'internal server error' }));
-    }else{
-      system.baseSystem.states.unregister(name);
-      res.status(200).send('ok');
-    }
   });
 
   return router;
