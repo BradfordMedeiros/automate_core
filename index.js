@@ -14,7 +14,6 @@ const customScriptApi = require('./src/customScriptApi');
 const ACCOUNT_SECRET_FILE = path.resolve('./data/account_secret');
 
 const email = getEmail('http://127.0.0.1:3000');
-
 // accounts code has it's  own database.  This is a database in this project
 // the other database is part of automate system dependency, which is considered different enough
 // to separate the dbs

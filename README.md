@@ -38,6 +38,7 @@ sequencer -c config
       		- type: topic
       		  topic: /sometopic
 
+
 switch -i "(wet->dry):airdry;(dry->wet):rain" && rules -c config
 
 
@@ -54,4 +55,19 @@ rules:
         value: /another/path/here
         alias: temperature
 
+
+* * * * * * /path/to/some/topic
+2 * * * * * /another/topic
+
+sequence-language:
+------------
+wait 2000
+some/topic/here
+hold /topic/here
+loop(
+  another/topic/here 
+  wait 3000
+)
+
+do_sequence another 
 

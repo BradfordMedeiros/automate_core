@@ -9,7 +9,6 @@ const create_routes = system => {
   const router = express();
 
   router.get('/', (req, res) => {
-    s = system;
     const sequences = system.engines.sequenceEngine.getSequences();
     const sequenceObjects = Object.keys(sequences).map(sequenceName => ({
       name: sequenceName,
