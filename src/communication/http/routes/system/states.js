@@ -1,6 +1,5 @@
 
 const express = require('express');
-const path = require('path');
 
 const create_routes = system => {
   if (system === undefined){
@@ -9,13 +8,13 @@ const create_routes = system => {
 
   const router = express();
 
-  const systemStates = system.baseSystem.states.getStates();
-  const states  = Object.keys(systemStates).map(stateKey => ({
-    topic: systemStates[stateKey].topic,
-    value: systemStates[stateKey].value,
-  }));
-
   router.get('/', (req, res) => {
+    const systemStates = system.baseSystem.states.getStates();
+    const states  = Object.keys(systemStates).map(stateKey => ({
+      topic: systemStates[stateKey].topic,
+      value: systemStates[stateKey].value,
+    }));
+
     res.jsonp({
       states,
     });
