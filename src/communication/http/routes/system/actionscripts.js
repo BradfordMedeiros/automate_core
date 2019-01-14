@@ -41,8 +41,10 @@ const create_routes = system => {
   router.delete('/*', (req, res) => {
     const name = path.relative('/', req.url);
     assert(name !== undefined);
-    res.jsonp({
-      value: 'ok'
+    system.engines.actionScriptEngine.deleteActionScript(name).then(() => {
+      res.send('ok');
+    }).catch(() => {
+      res.status(400).jsonp({ error: "Error deleting action script" });
     });
   });
 
