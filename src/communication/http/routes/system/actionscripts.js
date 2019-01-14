@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const assert = require('assert');
 
 const create_routes = system => {
   if (system === undefined){
@@ -20,7 +21,7 @@ const create_routes = system => {
       return;
     }
 
-    const name = path.relative('/modify/actionscripts/', req.url);
+    const name = path.relative('/modify/', req.url);
     const topic = req.body.topic;
     const toTopic = req.body.toTopic;
     const script = req.body.script;
@@ -30,8 +31,10 @@ const create_routes = system => {
     assert(toTopic !== undefined);
     assert(script !== undefined);
 
-    res.jsonp({
-      value: 'ok',
+    system.engines.actionScriptEngine.addActionScript(name, topic, script, toTopic).then(() => {
+      res.send('ok')
+    }).catch(() => {
+      res.status(400).jsonp({ error: "Error adding action script" });
     })
   });
 
