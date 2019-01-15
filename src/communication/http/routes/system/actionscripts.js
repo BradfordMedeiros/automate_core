@@ -15,7 +15,7 @@ const create_routes = system => {
     res.jsonp(actionScriptArray);
   });
  
-  router.post('/modify/*', (req, res) => {
+  router.post('/modify/*', async (req, res) => {
     if (req.body === undefined){
       res.status(400).jsonp({ error: 'invalid parameters' });
       return;
@@ -30,6 +30,11 @@ const create_routes = system => {
     assert(topic !== undefined);
     assert(toTopic !== undefined);
     assert(script !== undefined);
+
+    const hasActionScript = system.engines.actionScriptEngine.getActionScripts()[name] !== undefined;
+    if (hasActionScript){
+      await system.engines.actionScriptEngine.deleteActionScript(name);
+    }
 
     system.engines.actionScriptEngine.addActionScript(name, topic, script, toTopic).then(() => {
       res.send('ok')
